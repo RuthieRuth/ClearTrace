@@ -1,0 +1,324 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ============================================================
+// ENUMS
+// ============================================================
+
+enum Role {
+  superadmin
+  government
+  company
+
+  @@map("role")
+}
+
+enum AgencyType {
+  police
+  immigration
+  courts
+  prisons
+  education
+  health
+
+  @@map("agency_type")
+}
+
+enum OffenseCategory {
+  violent
+  financial
+  drug_related
+  minors
+  travel
+  cybercrime
+  property
+
+  @@map("offense_category")
+}
+
+enum ConvictionStatus {
+  convicted
+  acquitted
+  pending
+
+  @@map("conviction_status")
+}
+
+enum Severity {
+  low
+  medium
+  high
+
+  @@map("severity")
+}
+
+enum RequestStatus {
+  submitted
+  in_review
+  ready
+  accessed
+  expired
+
+  @@map("request_status")
+}
+
+enum DuplicateStatus {
+  pending_review
+  resolved
+  dismissed
+
+  @@map("duplicate_status")
+}
+
+enum OffenseEventType {
+  CONVICTION_RECORDED
+  SENTENCE_REDUCED
+  SENTENCE_INCREASED
+  CONVICTION_OVERTURNED
+  APPEAL_FILED
+  APPEAL_REJECTED
+  PAROLE_GRANTED
+  PAROLE_REVOKED
+  EARLY_RELEASE
+  SENTENCE_COMPLETED
+  RECORD_CORRECTED
+
+  @@map("offense_event_type")
+}
+
+// ============================================================
+// COMPANIES
+// ============================================================
+
+model Company {
+  id              String    @id @default(uuid()) @db.Uuid
+  name            String    @db.VarChar(255)
+  registration_no String    @unique @db.VarChar(100)
+  industry        String    @db.VarChar(100)
+  contact_email   String    @db.VarChar(255)
+  contact_phone   String?   @db.VarChar(20)
+  approved        Boolean   @default(false)
+  approved_by_id  String?   @db.Uuid
+  approved_at     DateTime?
+  is_active       Boolean   @default(true)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  approved_by User?    @relation("CompanyApprovedBy", fields: [approved_by_id], references: [id])
+  users       User[]   @relation("CompanyUsers")
+  requests    Request[]
+
+  @@map("companies")
+}
+
+// ============================================================
+// USERS
+// ============================================================
+
+model User {
+  id             String      @id @default(uuid()) @db.Uuid
+  full_name      String      @db.VarChar(255)
+  username       String      @unique @db.VarChar(255)
+  password       String      @db.VarChar(255)
+  phone          String?     @db.VarChar(20)
+  role           Role
+  agency_type    AgencyType?
+  company_id     String?     @db.Uuid
+  is_active      Boolean     @default(true)
+  first_login    Boolean     @default(true)
+  last_login     DateTime?
+  created_by_id  String?     @db.Uuid
+  created_at     DateTime    @default(now())
+  updated_at     DateTime    @updatedAt
+
+  company             Company?          @relation("CompanyUsers", fields: [company_id], references: [id])
+  created_by          User?             @relation("UserCreatedBy", fields: [created_by_id], references: [id])
+  created_users       User[]            @relation("UserCreatedBy")
+  companies_approved  Company[]         @relation("CompanyApprovedBy")
+  audit_logs          AuditLog[]
+  persons_created     Person[]
+  offenses_added      Offense[]
+  user_access_scope   UserAccessScope[] @relation("UserScope")
+  access_granted      UserAccessScope[] @relation("GrantedBy")
+  offense_events      OffenseEvent[]
+  duplicate_flags     DuplicateFlag[]   @relation("FlaggedBy")
+  duplicate_resolved  DuplicateFlag[]   @relation("ResolvedBy")
+  requests            Request[]         @relation("RequestedBy")
+  requests_reviewed   Request[]         @relation("ReviewedBy")
+
+  @@map("users")
+}
+
+// ============================================================
+// USER ACCESS SCOPE - eg: GET/offenses, allowed category of offense to see per agency_type
+// ============================================================
+
+model UserAccessScope {
+  id         String          @id @default(uuid()) @db.Uuid
+  user_id    String          @db.Uuid
+  category   OffenseCategory
+  granted_by String          @db.Uuid
+  granted_at DateTime        @default(now())
+  revoked_at DateTime?
+
+  user       User @relation("UserScope", fields: [user_id], references: [id])
+  granted_by_user User @relation("GrantedBy", fields: [granted_by], references: [id])
+
+  @@map("user_access_scope")
+}
+
+// ============================================================
+// PERSONS
+// ============================================================
+
+model Person {
+  id             String   @id @default(uuid()) @db.Uuid
+  full_name      String   @db.VarChar(255)
+  dob            DateTime @db.Date
+  national_id_no String   @unique @db.VarChar(50)
+  gender         String?  @db.VarChar(20)
+  nationality    String?  @db.VarChar(100)
+  photo_url      String?
+  address        String?
+  occupation     String?  @db.VarChar(150)
+  is_flagged     Boolean  @default(false)
+  created_by_id  String   @db.Uuid
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+
+  created_by      User            @relation(fields: [created_by_id], references: [id])
+  offenses        Offense[]
+  audit_logs      AuditLog[]
+  duplicate_flags DuplicateFlag[]
+  requests        Request[]
+
+  @@map("persons")
+}
+
+// ============================================================
+// OFFENSES
+// ============================================================
+
+model Offense {
+  id                String           @id @default(uuid()) @db.Uuid
+  person_id         String           @db.Uuid
+  category          OffenseCategory
+  description       String?
+  date_of_offense   DateTime         @db.Date
+  court             String?          @db.VarChar(255)
+  case_number       String?          @db.VarChar(100)
+  severity          Severity
+  conviction_status ConvictionStatus
+  sentence          String?          @db.VarChar(255)
+  sentence_start    DateTime?        @db.Date
+  sentence_end      DateTime?        @db.Date
+  is_current        Boolean          @default(true)
+  added_by_id       String           @db.Uuid
+  created_at        DateTime         @default(now())
+
+  person     Person         @relation(fields: [person_id], references: [id])
+  added_by   User           @relation(fields: [added_by_id], references: [id])
+  events     OffenseEvent[]
+
+  @@map("offenses")
+}
+
+// ============================================================
+// OFFENSE EVENTS
+// ============================================================
+
+model OffenseEvent {
+  id             String           @id @default(uuid()) @db.Uuid
+  offense_id     String           @db.Uuid
+  event_type     OffenseEventType
+  changed_field  String?          @db.VarChar(100)
+  previous_value String?
+  new_value      String?
+  notes          String?
+  changed_by_id  String           @db.Uuid
+  changed_at     DateTime         @default(now())
+
+  offense    Offense @relation(fields: [offense_id], references: [id])
+  changed_by User    @relation(fields: [changed_by_id], references: [id])
+
+  @@map("offense_events")
+}
+
+// ============================================================
+// DUPLICATE FLAGS
+// ============================================================
+
+model DuplicateFlag {
+  id             String          @id @default(uuid()) @db.Uuid
+  person_id      String          @db.Uuid
+  national_id_no String          @db.VarChar(50)
+  flagged_by_id  String          @db.Uuid
+  status         DuplicateStatus @default(pending_review)
+  notes          String?
+  flagged_at     DateTime        @default(now())
+  resolved_at    DateTime?
+  resolved_by_id String?         @db.Uuid
+
+  person      Person @relation(fields: [person_id], references: [id])
+  flagged_by  User   @relation("FlaggedBy", fields: [flagged_by_id], references: [id])
+  resolved_by User?  @relation("ResolvedBy", fields: [resolved_by_id], references: [id])
+
+  @@map("duplicate_flags")
+}
+
+// ============================================================
+// REQUESTS
+// ============================================================
+
+model Request {
+  id              String        @id @default(uuid()) @db.Uuid
+  person_id       String        @db.Uuid
+  company_id      String        @db.Uuid
+  requested_by_id String        @db.Uuid
+  purpose         String        @db.VarChar(100)
+  status          RequestStatus @default(submitted)
+  submitted_at    DateTime      @default(now())
+  reviewed_at     DateTime?
+  reviewed_by_id  String?       @db.Uuid
+  approved_at     DateTime?
+  expires_at      DateTime?
+  accessed_at     DateTime?
+  access_count    Int           @default(0)
+  notes           String?
+
+  person       Person  @relation(fields: [person_id], references: [id])
+  company      Company @relation(fields: [company_id], references: [id])
+  requested_by User    @relation("RequestedBy", fields: [requested_by_id], references: [id])
+  reviewed_by  User?   @relation("ReviewedBy", fields: [reviewed_by_id], references: [id])
+
+  @@map("requests")
+}
+
+// ============================================================
+// AUDIT LOGS
+// ============================================================
+
+model AuditLog {
+  id         String   @id @default(uuid()) @db.Uuid
+  user_id    String   @db.Uuid
+  person_id  String?  @db.Uuid
+  action     String   @db.VarChar(100)
+  details    Json?
+  ip_address String?  @db.VarChar(45)
+  user_agent String?
+  timestamp  DateTime @default(now())
+
+  user   User    @relation(fields: [user_id], references: [id])
+  person Person? @relation(fields: [person_id], references: [id])
+
+  @@map("audit_logs")
+}
