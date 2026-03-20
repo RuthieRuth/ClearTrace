@@ -6,4 +6,5 @@ export class CreateUserDto {
   password: string;
   role: Role;
   agency_type?: AgencyType;
+  company_id?: string;
 }

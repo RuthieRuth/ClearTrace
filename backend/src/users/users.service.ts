@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { createClerkClient } from '@clerk/backend';
 
-import * as bcrypt from 'bcrypt';
+const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 @Injectable()
 export class UsersService {
@@ -18,11 +19,24 @@ export class UsersService {
   }
 
   async create(data: CreateUserDto) {
-    //creat a new user
-    const newUser = { ...data };
-    newUser.password = await bcrypt.hash(newUser.password, 10);
+    // 1. Create user in Clerk
+    const clerkUser = await clerk.users.createUser({
+      username: data.username,
+      password: data.password,
+      publicMetadata: { role: data.role },
+    });
 
-    return this.prisma.user.create({ data: newUser });
+    // 2. Save to Postgres
+    return this.prisma.user.create({
+      data: {
+        clerk_id: clerkUser.id,
+        full_name: data.full_name,
+        username: data.username,
+        role: data.role,
+        agency_type: data.agency_type,
+        company_id: data.company_id,
+      },
+    });
   }
 
   update(id: string, data: UpdateUserDto) {

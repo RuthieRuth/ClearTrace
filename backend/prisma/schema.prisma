@@ -128,7 +128,7 @@ model User {
   id             String      @id @default(uuid()) @db.Uuid
   full_name      String      @db.VarChar(255)
   username       String      @unique @db.VarChar(255)
-  password       String      @db.VarChar(255)
+  clerk_id       String      @unique
   phone          String?     @db.VarChar(20)
   role           Role
   agency_type    AgencyType?

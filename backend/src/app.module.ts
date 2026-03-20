@@ -7,7 +7,7 @@ import { PersonsModule } from './persons/persons.module';
 import { OffensesModule } from './offenses/offenses.module';
 import { CompaniesModule } from './companies/companies.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
-import { AuthModule } from './auth/auth.module';
+//import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,7 +16,7 @@ import { AuthModule } from './auth/auth.module';
     OffensesModule,
     CompaniesModule,
     AuditLogsModule,
-    AuthModule,
+    // AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

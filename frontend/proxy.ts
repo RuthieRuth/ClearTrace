@@ -14,7 +14,7 @@ export default clerkMiddleware(async (auth, req) => {
       if (role === 'superadmin') return NextResponse.redirect(new URL('/superadmin', req.url))
       if (role === 'government') return NextResponse.redirect(new URL('/government', req.url))
       if (role === 'company') return NextResponse.redirect(new URL('/company', req.url))
-      return NextResponse.redirect(new URL('/', req.url))
+      return // no role set, let them through
     }
     return // let them see the login page
   }
