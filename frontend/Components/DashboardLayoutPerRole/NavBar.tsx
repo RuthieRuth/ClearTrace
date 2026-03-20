@@ -1,4 +1,6 @@
-import Link from 'next/link'
+'use client'
+import { UserButton } from '@clerk/nextjs'
+
 
 const NavBar = () => {
   return (
@@ -7,7 +9,7 @@ const NavBar = () => {
       <div className="flex gap-4">
         <button className="border rounded-xl px-3 py-1">Criminal Records</button>
         <button className="border rounded-xl px-3 py-1">Instructions</button>
-        <Link href="/login" className="border rounded-xl px-3 py-1">Logout</Link>
+        <UserButton />
       </div>
     </div>
   )
