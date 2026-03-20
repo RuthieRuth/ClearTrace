@@ -1,11 +1,6 @@
 // this is for companies to search for individuals
-
-
 'use client'
-
-import Link from 'next/link';
 import React, { useState } from 'react'
-
 
 const Search = () => {
   const [confirmationBox, setConfirmationBox] = useState(false)
