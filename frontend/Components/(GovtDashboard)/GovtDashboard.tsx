@@ -4,7 +4,7 @@ import { useState } from "react";
 import GovtSidebar from "../DashboardLayoutPerRole/GovtSidebar";
 import Search from "../Search";
 import NavBar from "../DashboardLayoutPerRole/NavBar";
-import NewEntry from "../NewEntry";
+import NewEntry from "../NewPlatfomUser";
 
 const GovtDashboard = () => {
   const [activeTab, setActiveTab] = useState("search");
