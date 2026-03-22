@@ -26,17 +26,23 @@ export class UsersService {
       publicMetadata: { role: data.role },
     });
 
-    // 2. Save to Postgres
-    return this.prisma.user.create({
-      data: {
-        clerk_id: clerkUser.id,
-        full_name: data.full_name,
-        username: data.username,
-        role: data.role,
-        agency_type: data.agency_type,
-        company_id: data.company_id,
-      },
-    });
+    try {
+      // 2. Save to Postgres
+      return this.prisma.user.create({
+        data: {
+          clerk_id: clerkUser.id,
+          full_name: data.full_name,
+          username: data.username,
+          role: data.role,
+          agency_type: data.agency_type || null,
+          company_id: data.company_id,
+        },
+      });
+    } catch (error) {
+      // If saving to Postgres fails, delete the user from Clerk
+      await clerk.users.deleteUser(clerkUser.id);
+      throw error;
+    }
   }
 
   update(id: string, data: UpdateUserDto) {
