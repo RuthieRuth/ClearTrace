@@ -16,7 +16,13 @@ export class PersonsService {
   }
 
   create(data: CreatePersonDto) {
-    return this.prisma.person.create({ data });
+    return this.prisma.person.create({
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      data: {
+        ...data,
+        dob: new Date(data.dob),
+      } as any,
+    });
   }
 
   update(id: string, data: UpdatePersonDto) {

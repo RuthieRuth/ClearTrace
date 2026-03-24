@@ -15,10 +15,10 @@ const GovtSidebar = ({ onSelectTab, activeTab }: SidebarProps) => {
         Search
       </button>
       <button
-        className={`p-2 text-left rounded border ${activeTab === 'newEntry' ? 'bg-gray-100 font-semibold' : ''}`}
-        onClick={() => onSelectTab('newEntry')}
+        className={`p-2 text-left rounded border ${activeTab === 'newPerson' ? 'bg-gray-100 font-semibold' : ''}`}
+        onClick={() => onSelectTab('newPerson')}
       >
-        New Entry
+        New Person
       </button>
       <button className='p-2 text-left rounded border'>
         People / Logs

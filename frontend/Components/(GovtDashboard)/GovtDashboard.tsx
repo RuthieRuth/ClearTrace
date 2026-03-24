@@ -4,10 +4,10 @@ import { useState } from "react";
 import GovtSidebar from "../DashboardLayoutPerRole/GovtSidebar";
 import Search from "../Search";
 import NavBar from "../DashboardLayoutPerRole/NavBar";
-import NewEntry from "../NewPlatfomUser";
+import NewPerson from "../NewPerson";
 
 const GovtDashboard = () => {
-  const [activeTab, setActiveTab] = useState("search");
+  const [activeTab, setActiveTab] = useState("home");
 
   return (
     <div className="flex flex-col h-screen">
@@ -15,8 +15,14 @@ const GovtDashboard = () => {
       <div className="flex flex-1">
         <GovtSidebar onSelectTab={setActiveTab} activeTab={activeTab} />
         <main className="flex-1 p-6">
+          {activeTab === "home" && 
+            <div className="space-y-16" >
+              <p>Dashboard</p>
+              <p>Welcome to the Super Admin Dashboard!</p>
+            </div>
+          }
           {activeTab === "search" && <Search />}
-          {activeTab === "newEntry" && <NewEntry />}
+          {activeTab === "newPerson" && <NewPerson/>}
         </main>
       </div>
     </div>
@@ -24,3 +30,5 @@ const GovtDashboard = () => {
 };
 
 export default GovtDashboard;
+
+

@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { PersonsService } from './persons.service';
@@ -16,12 +17,16 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guards';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
+import { PrismaService } from 'src/prisma.service';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.superadmin, Role.government)
 @Controller('persons')
 export class PersonsController {
-  constructor(private readonly personsService: PersonsService) {}
+  constructor(
+    private readonly personsService: PersonsService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   @Get()
   findAll() {
@@ -34,7 +39,16 @@ export class PersonsController {
   }
 
   @Post()
-  create(@Body() body: CreatePersonDto) {
+  async create(@Body() body: CreatePersonDto, @Req() req: Request) {
+    const clerkUser = req['user'];
+    const extractUser = await this.prisma.user.findUnique({
+      where: { clerk_id: clerkUser.id },
+    });
+    if (!extractUser) {
+      throw new Error('User not found in database');
+    }
+    body.created_by_id = extractUser.id;
+
     return this.personsService.create(body);
   }
 

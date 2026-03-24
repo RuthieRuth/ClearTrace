@@ -37,7 +37,13 @@ export class OffensesService {
   }
 
   create(data: CreateOffenseDto) {
-    return this.prisma.offense.create({ data });
+    return this.prisma.offense.create({
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+      data: {
+        ...data,
+        date_of_offense: new Date(data.date_of_offense),
+      } as any,
+    });
   }
 
   update(id: string, data: UpdateOffenseDto) {

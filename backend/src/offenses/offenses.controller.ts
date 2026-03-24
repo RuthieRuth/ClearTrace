@@ -17,12 +17,16 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guards';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role, User } from '@prisma/client';
+import { PrismaService } from 'src/prisma.service';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.superadmin, Role.government)
 @Controller('offenses')
 export class OffensesController {
-  constructor(private readonly offensesService: OffensesService) {}
+  constructor(
+    private readonly offensesService: OffensesService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   @Get()
   findAll(@Request() req: { user: User }) {
@@ -35,7 +39,15 @@ export class OffensesController {
   }
 
   @Post()
-  create(@Body() body: CreateOffenseDto) {
+  async create(@Body() body: CreateOffenseDto, @Request() req: { user: User }) {
+    const clerkUser = req['user'];
+    const extractUser = await this.prisma.user.findUnique({
+      where: { clerk_id: clerkUser.id },
+    });
+    if (!extractUser) {
+      throw new Error('User not found in database');
+    }
+    body.added_by_id = extractUser.id;
     return this.offensesService.create(body);
   }
 
