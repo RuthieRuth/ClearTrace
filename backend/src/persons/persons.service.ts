@@ -11,6 +11,18 @@ export class PersonsService {
     return this.prisma.person.findMany();
   }
 
+  findMany(query: string) {
+    return this.prisma.person.findMany({
+      where: {
+        OR: [
+          { full_name: { contains: query, mode: 'insensitive' } },
+          { national_id_no: { contains: query, mode: 'insensitive' } },
+        ],
+      },
+      include: { offenses: true },
+    });
+  }
+
   findOne(id: string) {
     return this.prisma.person.findUnique({ where: { id } });
   }

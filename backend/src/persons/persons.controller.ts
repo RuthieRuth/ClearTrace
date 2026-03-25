@@ -33,6 +33,11 @@ export class PersonsController {
     return this.personsService.findAll();
   }
 
+  @Get('search/:query')
+  findMany(@Param('query') query: string) {
+    return this.personsService.findMany(query);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.personsService.findOne(id);

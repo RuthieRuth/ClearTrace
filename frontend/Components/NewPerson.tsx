@@ -20,6 +20,24 @@ const NewPerson = () => {
     const [description, setDescription] = useState('')
     const [confirmationBox, setConfirmationBox] = useState(false)
     const { getToken } = useAuth()
+    const resetForm = () => {
+        setFullname('')
+        setNationalId('')
+        setDob('')
+        setGender('')
+        setNationality('')
+        setOccupation('')
+        setAddress('')
+        setPhoto('')
+        setOffenseCategory('')
+        setSeverity('')
+        setDateOfOffense('')
+        setConvictionStatus('')
+        setCourt('')
+        setCaseNumber('')
+        setDescription('')
+    }
+
     
     const confirmNewPerson = () => {
         setConfirmationBox(true)
@@ -55,6 +73,7 @@ const NewPerson = () => {
         }, { headers: { Authorization: `Bearer ${token}` } })
         setConfirmationBox(false)
         alert('Entry saved successfully')
+        resetForm()
         }
        catch (error) {
         console.error('Error response:', error);
