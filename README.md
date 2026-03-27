@@ -6,7 +6,7 @@
 
 ## Overview
 
-ClearTrace is a secure, role-based platform for centralising and controlling access to sensitive records — with full audit trails and tiered access across multiple types of organisations. It provides a controlled bridge between record-keeping institutions and authorised third parties who require verified information for legitimate purposes.
+ClearTrace is a secure, role-based platform for centralising and controlling access to sensitive records with full audit trails and tiered access across multiple types of organisations. It provides a controlled bridge between record-keeping institutions and authorised third parties who require verified information for legitimate purposes.
 
 The platform is built with data integrity, access control, and full auditability at its core.
 
@@ -16,7 +16,9 @@ The platform is built with data integrity, access control, and full auditability
 
 🚧 **Work in progress** — not ready for production use.
 
-Architecture and database design are still being refined. Backend and frontend are in early development.
+- Authentication and role-based access are functional
+- Core data entry and search are in active development
+- Architecture and database design are still being refined
 
 ---
 
@@ -35,7 +37,7 @@ Architecture and database design are still being refined. Backend and frontend a
 - **Frontend** — Next.js, Tailwind CSS
 - **Backend** — NestJS, TypeScript
 - **Database** — PostgreSQL, Prisma ORM
-- **Auth** — JWT, Passport.js
+- **Auth** — Clerk
 
 ---
 
@@ -53,12 +55,12 @@ cleartrace/
 
 ## Getting started
 
-Documentation for local setup will be added once the core modules are stable.
+Local setup instructions will be added once the core modules are stable. Feel free to open an issue with questions in the meantime.
 
 ---
 
 ## Contributing
 
-This project is not open for external contributions at this time.
+Solo project — not accepting external contributions at this time.
 
 ---

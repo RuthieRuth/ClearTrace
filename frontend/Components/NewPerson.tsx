@@ -1,6 +1,6 @@
 import { useAuth } from '@clerk/nextjs'
 import axios from 'axios'
-import React, { useState } from 'react'
+import { useState } from 'react'
 
 const NewPerson = () => {
     const [fullname, setFullname] = useState('')
@@ -20,9 +20,10 @@ const NewPerson = () => {
     const [description, setDescription] = useState('')
     const [confirmationBox, setConfirmationBox] = useState(false)
     const { getToken } = useAuth()
+
     const resetForm = () => {
         setFullname('')
-        setNationalId('')
+        setNationalId('')   
         setDob('')
         setGender('')
         setNationality('')
@@ -37,7 +38,6 @@ const NewPerson = () => {
         setCaseNumber('')
         setDescription('')
     }
-
     
     const confirmNewPerson = () => {
         setConfirmationBox(true)
@@ -48,7 +48,7 @@ const NewPerson = () => {
        const token = await getToken()
        try{
             // sending two separate POST requests to create person and offense entries
-        const sendPost1= await axios .post('http://localhost:3000/persons', {
+        const getPerson= await axios .post('http://localhost:3000/persons', {
                 full_name: fullname,
                 national_id_no: nationalId,
                 dob: dob,
@@ -59,7 +59,7 @@ const NewPerson = () => {
                 photo_url: photo,
         }, { headers: { Authorization: `Bearer ${token}` } })
 
-            const personId =  sendPost1.data.id;
+            const personId =  getPerson.data.id;
         
         await axios.post('http://localhost:3000/offenses', {
             category: offenseCategory,
@@ -138,7 +138,7 @@ const NewPerson = () => {
             <option>travel</option>
             <option>cybercrime</option>
             <option>property</option>
-            </select>
+        </select>
 
         <div className="flex gap-5 mb-2 mt-2">
         <p>Severity:</p>

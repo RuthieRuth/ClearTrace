@@ -34,8 +34,9 @@ export class PersonsController {
   }
 
   @Get('search/:query')
-  findMany(@Param('query') query: string) {
-    return this.personsService.findMany(query);
+  findMany(@Param('query') query: string, @Req() req: Request) {
+    const clerkId = req['user'].id;
+    return this.personsService.findMany(query, clerkId);
   }
 
   @Get(':id')

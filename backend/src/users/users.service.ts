@@ -4,6 +4,8 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { createClerkClient } from '@clerk/backend';
 
+import { OffenseCategory } from '@prisma/client';
+
 const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 @Injectable()
@@ -27,8 +29,7 @@ export class UsersService {
     });
 
     try {
-      // 2. Save to Postgres
-      return this.prisma.user.create({
+      const newUser = await this.prisma.user.create({
         data: {
           clerk_id: clerkUser.id,
           full_name: data.full_name,
@@ -38,6 +39,18 @@ export class UsersService {
           company_id: data.company_id,
         },
       });
+
+      if (data.offense_access && data.offense_access.length > 0) {
+        await this.prisma.userAccessScope.createMany({
+          data: data.offense_access.map((category) => ({
+            user_id: newUser.id,
+            category: category as OffenseCategory,
+            granted_by: newUser.id,
+          })),
+        });
+      }
+
+      return newUser;
     } catch (error) {
       // If saving to Postgres fails, delete the user from Clerk
       await clerk.users.deleteUser(clerkUser.id);

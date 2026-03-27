@@ -14,16 +14,28 @@ const NewEntry = ({ onClose }: Props) => {
   const [role, setRole] = useState('')
   const [agencyType, setAgencyType] = useState('')
   const [confirmationBox, setConfirmationBox] = useState(false)
+  const [offenseAccess, setOffenseAccess] = useState<string[]>([])
+
   const { getToken } = useAuth()
 
   const confirmNewEntry = () => {
     setConfirmationBox(true)
   }
 
+  const selectOffenseAccess = (category: string) => {
+    setOffenseAccess(prev => {
+      const selectedScope = prev.includes(category) 
+      ? prev.filter(c => c !== category)
+      : [...prev, category]
+      console.log('Selected offense categories:', selectedScope)
+      return selectedScope
+    })
+  }
+
   const submitEntry = async () => {
     const token = await getToken()
     axios.post('http://localhost:3000/users',
-      { full_name: fullname, username, password, role, agency_type: agencyType },
+      { full_name: fullname, username, password, role, agency_type: agencyType, offense_access: offenseAccess },
       { headers: { Authorization: `Bearer ${token}` } }
     )
       .then(response => {
@@ -60,33 +72,61 @@ const NewEntry = ({ onClose }: Props) => {
             className="col-start-1 row-start-1 appearance-none bg-gray-50 dark:bg-gray-800 ..."
             value={role}
             onChange={(e) => setRole(e.target.value)}>
-            <option>government</option>
-            <option>company</option>
-            <option>superadmin</option>
+            <option value="">-- select --</option>
+            <option value="government">government</option>
+            <option value="company">company</option>
+            <option value="superadmin">superadmin</option>
           </select>
         </div>
       </div>
 
       <div className="flex gap-5 mb-2 ">
-        <p className="mt-1">Agency Type:</p>
+        <p className="mt-5">Agency Type:</p>
         <div className="grid">
           <select 
             className="col-start-1 row-start-1 appearance-none bg-gray-50 dark:bg-gray-800 ..."
             value={agencyType}
             onChange={(e) => setAgencyType(e.target.value)}>
-            <option>police</option>
-            <option>immigration</option>
-            <option>courts</option>
-            <option>prison</option>
-            <option>education</option>
-            <option>health</option>
-            <option></option>
+            <option value="">-- select --</option>
+            <option value="police">police</option>
+            <option value="immigration">immigration</option>
+            <option value="courts">courts</option>
+            <option value="prison">prison</option>
+            <option value="education">education</option>
+            <option value="health">health</option>
           </select>
+        </div>
+      </div>
+
+      <div>
+        <p className="mt-5">Offense Category Access</p>
+        <div className="grid grid-cols-2 gap-2 mt-2 mb-4">
+          <label>
+            <input type="checkbox" onChange={() => selectOffenseAccess('violent')} checked={offenseAccess.includes('violent')} />Violent
+          </label>
+          <label>
+            <input type="checkbox" onChange={() => selectOffenseAccess('financial')} checked={offenseAccess.includes('financial')} />Financial
+          </label>
+          <label>
+            <input type="checkbox" onChange={() => selectOffenseAccess('drug_related')} checked={offenseAccess.includes('drug_related')} />Drug Related
+          </label>
+          <label>
+            <input type="checkbox" onChange={() => selectOffenseAccess('minors')} checked={offenseAccess.includes('minors')} /> Minors
+          </label>
+          <label>
+            <input type="checkbox" onChange={() => selectOffenseAccess('travel')} checked={offenseAccess.includes('travel')} /> Travel
+          </label>
+          <label>
+            <input type="checkbox" onChange={() => selectOffenseAccess('cybercrime')} checked={offenseAccess.includes('cybercrime')} /> Cybercrime
+          </label>
+          <label>
+            <input type="checkbox" onChange={() => selectOffenseAccess('property')} checked={offenseAccess.includes('property')} /> Property
+          </label>
         </div>
       </div>
      
 
-      <h1 className="font-semibold">LOG IN DETAILS</h1>
+      <h1 className="font-semibold ">LOG IN DETAILS</h1>
       <div className="flex gap-5 mb-2">
         <p className="mt-1">Username:</p>
         <input className="border border-gray-300 rounded-md p-2" type="text" value={username} onChange={(e) => setUsername(e.target.value)} />

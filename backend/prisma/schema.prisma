@@ -18,7 +18,8 @@ enum Role {
   superadmin
   government
   company
-
+  police
+  courts
   @@map("role")
 }
 

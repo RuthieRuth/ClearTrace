@@ -7,4 +7,5 @@ export class CreateUserDto {
   role: Role;
   agency_type?: AgencyType;
   company_id?: string;
+  offense_access?: string[];
 }

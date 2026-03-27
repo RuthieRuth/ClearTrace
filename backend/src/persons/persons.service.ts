@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreatePersonDto } from './dto/create-person.dto';
 import { UpdatePersonDto } from './dto/update-person.dto';
+import { Role } from '@prisma/client';
 
 @Injectable()
 export class PersonsService {
@@ -11,7 +12,33 @@ export class PersonsService {
     return this.prisma.person.findMany();
   }
 
-  findMany(query: string) {
+  async findMany(query: string, clerkId: string) {
+    // get the details of the one doing the search
+    const user = await this.prisma.user.findUnique({
+      where: { clerk_id: clerkId },
+    });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    // get the allowed acccess scope of the user
+    const accessScopes = await this.prisma.userAccessScope.findMany({
+      where: { user_id: user.id, revoked_at: null },
+    });
+    const allowedCategories = accessScopes.map((scope) => scope.category);
+
+    // search person, filter the search results based on the access scope
+    if (user.role === Role.superadmin) {
+      return this.prisma.person.findMany({
+        where: {
+          OR: [
+            { full_name: { contains: query, mode: 'insensitive' } },
+            { national_id_no: { contains: query, mode: 'insensitive' } },
+          ],
+        },
+        include: { offenses: true },
+      });
+    }
     return this.prisma.person.findMany({
       where: {
         OR: [
@@ -19,7 +46,11 @@ export class PersonsService {
           { national_id_no: { contains: query, mode: 'insensitive' } },
         ],
       },
-      include: { offenses: true },
+      include: {
+        offenses: {
+          where: { category: { in: allowedCategories } },
+        },
+      },
     });
   }
 
