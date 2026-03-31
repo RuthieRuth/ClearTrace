@@ -157,13 +157,17 @@ const Search = () => {
                     value={offenseCategory}
                     onChange={(e) => setOffenseCategory(e.target.value)}>
                 <option value="">-- select --</option>
-                <option>violent</option>
-                <option>financial</option>
-                <option>drug_related</option>
-                <option>minors</option>
-                <option>travel</option>
-                <option>cybercrime</option>
-                <option>property</option>
+                <option>offenses_against_person</option>
+                <option>offenses_against_property</option>
+                <option>offenses_against_public_order</option>
+                <option>offenses_against_state</option>
+                <option>narcotic_offenses</option>
+                <option>sexual_offenses</option>
+                <option>offenses_involving_minors</option>
+                <option>economic_and_financial_offenses</option>
+                <option>cybercrime_offenses</option>
+                <option>road_traffic_offenses</option>
+                <option>immigration_offenses</option>
               </select>
 
               <p>Severity:</p>
