@@ -7,6 +7,20 @@ type Props = {
   onClose: () => void;
 };
 
+interface AgencyTypeDefaults {
+  [agencyType: string]: string[];
+}
+
+const agencyTypeDefaults: AgencyTypeDefaults = {
+  police: ['offenses_against_person', 'offenses_against_property', 'offenses_against_public_order', 'offenses_against_state', 'narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors', 'economic_and_financial_offenses', 'cybercrime_offenses', 'road_traffic_offenses', 'immigration_offenses'],  
+  courts: ['offenses_against_person', 'offenses_against_property', 'offenses_against_public_order', 'offenses_against_state', 'narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors', 'economic_and_financial_offenses', 'cybercrime_offenses', 'road_traffic_offenses', 'immigration_offenses'],
+  prison: ['offenses_against_person', 'offenses_against_public_order', 'offenses_against_state', 'narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors'],
+  education: ['offenses_against_person','offenses_against_public_order', 'narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors'],
+  health: ['narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors'],
+  immigration: ['offenses_against_state','narcotic_offenses','immigration_offenses'],
+};
+
+
 const NewEntry = ({ onClose }: Props) => {
   const [fullname, setFullname] = useState('')
   const [username, setUsername] = useState('')
@@ -86,7 +100,10 @@ const NewEntry = ({ onClose }: Props) => {
           <select 
             className="col-start-1 row-start-1 appearance-none bg-gray-50 dark:bg-gray-800 ..."
             value={agencyType}
-            onChange={(e) => setAgencyType(e.target.value)}>
+            onChange={(e) => {
+              setAgencyType(e.target.value)
+              setOffenseAccess(agencyTypeDefaults[e.target.value] ?? []) 
+            }}>
             <option value="">-- select --</option>
             <option value="police">police</option>
             <option value="immigration">immigration</option>

@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -22,6 +23,19 @@ import { Role } from '@prisma/client';
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  // endpoint to get the user details of the one making the request (during sign-in)
+  @Get('me')
+  @Roles(
+    Role.superadmin,
+    Role.government,
+    Role.company,
+    Role.police,
+    Role.courts,
+  )
+  findMe(@Req() req: any) {
+    return this.usersService.findMe(req.user.id);
+  }
 
   @Get()
   findAll() {
