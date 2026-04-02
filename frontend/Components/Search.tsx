@@ -2,6 +2,7 @@
 "use client";
 import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
+
 import React, { useState } from "react";
 
 interface Offense {
@@ -27,11 +28,12 @@ interface Person {
 
 
 const Search = () => {
+  const { getToken } = useAuth();
   const [resultBox, setResultBox] = useState<Person[] | null>(null);
   const [query, setQuery] = useState("");
-  const { getToken } = useAuth();
-  const [results, setResults] = useState<Person[]>([]);
+  const [dataResults, setDataResults] = useState<Person[]>([]);
   const [newOffense, setNewOffense] = useState(false); // new offense form state
+
   const [offenseCategory, setOffenseCategory] = useState("");
   const [severity, setSeverity] = useState("");
   const [dateOfOffense, setDateOfOffense] = useState("");
@@ -44,7 +46,7 @@ const Search = () => {
   const submitRequest = async () => {
     console.log("Submit button clicked");
     setResultBox([]);
-    setResults([]);
+    setDataResults([]);
 
     const token = await getToken();
     axios
@@ -55,7 +57,7 @@ const Search = () => {
         console.log("Query:", query);
         console.log("Search results:", response.data);
         setResultBox(response.data);
-        setResults(response.data);
+        setDataResults(response.data);
       })
       .catch((error) => {
         console.error("Error during search:", error);
@@ -103,6 +105,7 @@ const Search = () => {
       <div className="flex flex-col items-center justify-center p-5 bg-blue-300">
         <h1 className="text-2xl font-bold mb-4">Search for Individual </h1>
 
+        {/* should be able to search by name or national id, but for now just national id */}
         <div className="flex gap-5 mb-2">
           <p className="mt-1">Name:</p>
           <input
@@ -128,12 +131,22 @@ const Search = () => {
         </div>
       </div>
 
-      {resultBox && (
+      {resultBox && resultBox.length === 0 
+        ? (<div className="flex flex-col mt-10 ">
+            <h1 className="font-bold mb-2 mt-2 items-center flex justify-center">RESULTS</h1>
+            <p className="flex justify-center">No results found.</p>
+            <button 
+              className="flex justify-center self-center border p-2 mt-5" 
+              onClick={() => console.log("Add new person clicked")}>
+              Add new person
+            </button>
+          </div>)
+        :(
         <div className="border rounded-md mt-2">
           <h1 className="font-bold mb-2 mt-2 items-center flex justify-center">
             RESULTS
           </h1>
-          {results.map((person) => (
+          {dataResults.map((person) => (
             <div key={person.id} className="p-5 mb-5 rounded-md">
               <p className="font-bold mb-2 underline">BASIC INFO:</p>
               <div className="ml-7 divide-y divide-gray-200 border border-gray-200 rounded-md">
