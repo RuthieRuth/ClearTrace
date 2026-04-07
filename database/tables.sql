@@ -18,13 +18,17 @@ CREATE TYPE agency_type AS ENUM (
 );
 
 CREATE TYPE offense_category AS ENUM (
-  'violent',
-  'financial',
-  'drug_related',
-  'minors',
-  'travel',
-  'cybercrime',
-  'property'
+  'offenses_against_person',
+  'offenses_against_property',
+  'offenses_against_public_order',
+  'offenses_against_state',
+  'narcotic_offenses',
+  'sexual_offenses',
+  'offenses_involving_minors',
+  'economic_and_financial_offenses',
+  'cybercrime_offenses',
+  'road_traffic_offenses',
+  'immigration_offenses'
 );
 
 CREATE TYPE conviction_status AS ENUM (

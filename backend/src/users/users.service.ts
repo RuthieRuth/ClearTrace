@@ -12,12 +12,24 @@ const clerk = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
+  // custom queary to get the user details of the one making the request (during sign-in), using the clerk id from the jwt token
+  findMe(clerkId: string) {
+    return this.prisma.user.findUnique({
+      where: { clerk_id: clerkId },
+      include: { user_access_scope: true },
+    });
+  }
+
+  // read options
   findAll() {
     return this.prisma.user.findMany();
   }
 
   findOne(id: string) {
-    return this.prisma.user.findUnique({ where: { id } });
+    return this.prisma.user.findUnique({
+      where: { id },
+      include: { user_access_scope: true },
+    });
   }
 
   async create(data: CreateUserDto) {

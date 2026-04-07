@@ -7,6 +7,20 @@ type Props = {
   onClose: () => void;
 };
 
+interface AgencyTypeDefaults {
+  [agencyType: string]: string[];
+}
+
+const agencyTypeDefaults: AgencyTypeDefaults = {
+  police: ['offenses_against_person', 'offenses_against_property', 'offenses_against_public_order', 'offenses_against_state', 'narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors', 'economic_and_financial_offenses', 'cybercrime_offenses', 'road_traffic_offenses', 'immigration_offenses'],  
+  courts: ['offenses_against_person', 'offenses_against_property', 'offenses_against_public_order', 'offenses_against_state', 'narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors', 'economic_and_financial_offenses', 'cybercrime_offenses', 'road_traffic_offenses', 'immigration_offenses'],
+  prison: ['offenses_against_person', 'offenses_against_public_order', 'offenses_against_state', 'narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors'],
+  education: ['offenses_against_person','offenses_against_public_order', 'narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors'],
+  health: ['narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors'],
+  immigration: ['offenses_against_state','narcotic_offenses','immigration_offenses'],
+};
+
+
 const NewEntry = ({ onClose }: Props) => {
   const [fullname, setFullname] = useState('')
   const [username, setUsername] = useState('')
@@ -86,7 +100,10 @@ const NewEntry = ({ onClose }: Props) => {
           <select 
             className="col-start-1 row-start-1 appearance-none bg-gray-50 dark:bg-gray-800 ..."
             value={agencyType}
-            onChange={(e) => setAgencyType(e.target.value)}>
+            onChange={(e) => {
+              setAgencyType(e.target.value)
+              setOffenseAccess(agencyTypeDefaults[e.target.value] ?? []) 
+            }}>
             <option value="">-- select --</option>
             <option value="police">police</option>
             <option value="immigration">immigration</option>
@@ -102,25 +119,37 @@ const NewEntry = ({ onClose }: Props) => {
         <p className="mt-5">Offense Category Access</p>
         <div className="grid grid-cols-2 gap-2 mt-2 mb-4">
           <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('violent')} checked={offenseAccess.includes('violent')} />Violent
+            <input type="checkbox" onChange={() => selectOffenseAccess('offenses_against_person')} checked={offenseAccess.includes('offenses_against_person')} /> Offenses Against Person
           </label>
           <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('financial')} checked={offenseAccess.includes('financial')} />Financial
+            <input type="checkbox" onChange={() => selectOffenseAccess('offenses_against_property')} checked={offenseAccess.includes('offenses_against_property')} /> Offenses Against Property
           </label>
           <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('drug_related')} checked={offenseAccess.includes('drug_related')} />Drug Related
+            <input type="checkbox" onChange={() => selectOffenseAccess('offenses_against_public_order')} checked={offenseAccess.includes('offenses_against_public_order')} /> Offenses Against Public Order
           </label>
           <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('minors')} checked={offenseAccess.includes('minors')} /> Minors
+            <input type="checkbox" onChange={() => selectOffenseAccess('offenses_against_state')} checked={offenseAccess.includes('offenses_against_state')} /> Offenses Against State
           </label>
           <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('travel')} checked={offenseAccess.includes('travel')} /> Travel
+            <input type="checkbox" onChange={() => selectOffenseAccess('narcotic_offenses')} checked={offenseAccess.includes('narcotic_offenses')} /> Narcotic Offenses
           </label>
           <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('cybercrime')} checked={offenseAccess.includes('cybercrime')} /> Cybercrime
+            <input type="checkbox" onChange={() => selectOffenseAccess('sexual_offenses')} checked={offenseAccess.includes('sexual_offenses')} /> Sexual Offenses
           </label>
           <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('property')} checked={offenseAccess.includes('property')} /> Property
+            <input type="checkbox" onChange={() => selectOffenseAccess('offenses_involving_minors')} checked={offenseAccess.includes('offenses_involving_minors')} /> Offenses Involving Minors
+          </label>
+          <label>
+            <input type="checkbox" onChange={() => selectOffenseAccess('economic_and_financial_offenses')} checked={offenseAccess.includes('economic_and_financial_offenses')} /> Economic & Financial Offenses
+          </label>
+          <label>
+            <input type="checkbox" onChange={() => selectOffenseAccess('cybercrime_offenses')} checked={offenseAccess.includes('cybercrime_offenses')} /> Cybercrime Offenses
+          </label>
+          <label>
+            <input type="checkbox" onChange={() => selectOffenseAccess('road_traffic_offenses')} checked={offenseAccess.includes('road_traffic_offenses')} /> Road Traffic Offenses
+          </label>
+          <label>
+            <input type="checkbox" onChange={() => selectOffenseAccess('immigration_offenses')} checked={offenseAccess.includes('immigration_offenses')} /> Immigration Offenses
           </label>
         </div>
       </div>

@@ -6,15 +6,15 @@
 
 ## Overview
 
-ClearTrace is a secure, role-based platform for centralising and controlling access to sensitive records with full audit trails and tiered access across multiple types of organisations. It provides a controlled bridge between record-keeping institutions and authorised third parties who require verified information for legitimate purposes.
+ClearTrace is a multi-tenant SaaS platform for centralising access to sensitive records with strict, role-based control and full audit trails. It connects record-holding organisations with authorised third parties who require verified information for legitimate purposes — all through a governed, permission-gated interface.
 
-The platform is built with data integrity, access control, and full auditability at its core.
+Access is tiered by organisation type and individual role, ensuring each user sees only what they are permitted to see.
 
 ---
 
 ## Status
 
-🚧 **Work in progress** — not ready for production use.
+Work in progress — not ready for production use.
 
 - Authentication and role-based access are functional
 - Core data entry and search are in active development
@@ -24,10 +24,10 @@ The platform is built with data integrity, access control, and full auditability
 
 ## Planned features
 
-- Tiered access to verified records based on user role and permissions
-- Support for multiple categories of users with different levels of data visibility
-- Complete audit trail of all actions taken on the platform
-- Request lifecycle management for third-party data access
+- Multi-tenant onboarding with organisation-level isolation
+- Tiered, role-scoped access to verified records
+- Request lifecycle management for cross-organisation data queries
+- Complete audit trail of all actions across all tenants
 - Duplicate and conflicting record detection and review
 
 ---
@@ -45,10 +45,10 @@ The platform is built with data integrity, access control, and full auditability
 
 ```
 cleartrace/
-├── frontend/       
-├── backend/        
-├── database/       
-└── README.md       
+├── frontend/
+├── backend/
+├── database/
+└── README.md
 ```
 
 ---
@@ -62,5 +62,3 @@ Local setup instructions will be added once the core modules are stable. Feel fr
 ## Contributing
 
 Solo project — not accepting external contributions at this time.
-
----
