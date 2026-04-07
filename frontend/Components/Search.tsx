@@ -1,9 +1,11 @@
 // this is for government to search for individuals
 "use client";
+
 import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 
-import React, { useState } from "react";
+import { useState } from "react";
+import { useRouter } from 'next/navigation'
 
 interface Offense {
   id: string
@@ -42,6 +44,8 @@ const Search = () => {
   const [caseNumber, setCaseNumber] = useState("");
   const [description, setDescription] = useState("");
   const [selectedPersonId, setSelectedPersonId] = useState("");
+
+  const router = useRouter();
 
   const submitRequest = async () => {
     console.log("Submit button clicked");
@@ -137,202 +141,202 @@ const Search = () => {
             <p className="flex justify-center">No results found.</p>
             <button 
               className="flex justify-center self-center border p-2 mt-5" 
-              onClick={() => console.log("Add new person clicked")}>
+              onClick={() => {
+                console.log("add new person clicked")
+                router.push("/new-person")
+              }}>
               Add new person
             </button>
           </div>)
-        :(
-        <div className="border rounded-md mt-2">
-          <h1 className="font-bold mb-2 mt-2 items-center flex justify-center">
-            RESULTS
-          </h1>
-          {dataResults.map((person) => (
-            <div key={person.id} className="p-5 mb-5 rounded-md">
-              <p className="font-bold mb-2 underline">BASIC INFO:</p>
-              <div className="ml-7 divide-y divide-gray-200 border border-gray-200 rounded-md">
-                <div className="flex gap-4 px-4 py-2">
-                  <span className="font-semibold w-32 shrink-0">Name</span>
-                  <span>{person.full_name}</span>
-                </div>
-                <div className="flex gap-4 px-4 py-2">
-                  <span className="font-semibold w-32 shrink-0">National ID</span>
-                  <span>{person.national_id}</span>
-                </div>
-                <div className="flex gap-4 px-4 py-2">
-                  <span className="font-semibold w-32 shrink-0">Date of Birth</span>
-                  <span>{person.dob}</span>
-                </div>
-                <div className="flex gap-4 px-4 py-2">
-                  <span className="font-semibold w-32 shrink-0">Gender</span>
-                  <span>{person.gender}</span>
-                </div>
-                <div className="flex gap-4 px-4 py-2">
-                  <span className="font-semibold w-32 shrink-0">Nationality</span>
-                  <span>{person.nationality}</span>
-                </div>
-                <div className="flex gap-4 px-4 py-2">
-                  <span className="font-semibold w-32 shrink-0">Occupation</span>
-                  <span>{person.occupation}</span>
-                </div>
-              </div>
-
-              {person.offenses.length > 0 && (
-                <div className="mt-6">
-                  <p className="font-bold mb-2 underline">OFFENSES LISTED</p>
-                  <div className="flex flex-col gap-3 ml-7">
-                    {person.offenses.map((offense: {id: string; category: string; conviction_status: string; severity: string; court: string; case_number: string; description: string}, index: number) => (
-                      <div key={offense.id} className="border border-gray-200 rounded-md divide-y divide-gray-200">
-                        <div className="px-4 py-2 bg-gray-50 flex justify-between">
-                          <span className="font-semibold text-sm">Offense {index + 1}</span>
-                          <p className="text-blue-500 hover:text-blue-700 cursor-pointer">Edit</p>
-                        </div>
-                        <div className="flex gap-4 px-4 py-2">
-                          <span className="font-semibold w-36 shrink-0">Category</span>
-                          <span>{offense.category}</span>
-                        </div>
-                        <div className="flex gap-4 px-4 py-2">
-                          <span className="font-semibold w-36 shrink-0">Conviction Status</span>
-                          <span>{offense.conviction_status}</span>
-                        </div>
-                        <div className="flex gap-4 px-4 py-2">
-                          <span className="font-semibold w-36 shrink-0">Severity</span>
-                          <span>{offense.severity}</span>
-                        </div>
-                        <div className="flex gap-4 px-4 py-2">
-                          <span className="font-semibold w-36 shrink-0">Court</span>
-                          <span>{offense.court}</span>
-                        </div>
-                        <div className="flex gap-4 px-4 py-2">
-                          <span className="font-semibold w-36 shrink-0">Case Number</span>
-                          <span>{offense.case_number}</span>
-                        </div>
-                        <div className="flex gap-4 px-4 py-2">
-                          <span className="font-semibold w-36 shrink-0">Description</span>
-                          <span>{offense.description}</span>
-                        </div>
-                      </div>
-                    ))}
+        : resultBox && (
+          <div className="border rounded-md mt-2">
+            <h1 className="font-bold mb-2 mt-2 items-center flex justify-center">RESULTS</h1>
+            {dataResults.map((person) => (
+              <div key={person.id} className="p-5 mb-5 rounded-md">
+                <p className="font-bold mb-2 underline">BASIC INFO:</p>
+                <div className="ml-7 divide-y divide-gray-200 border border-gray-200 rounded-md">
+                  <div className="flex gap-4 px-4 py-2">
+                    <span className="font-semibold w-32 shrink-0">Name</span>
+                    <span>{person.full_name}</span>
+                  </div>
+                  <div className="flex gap-4 px-4 py-2">
+                    <span className="font-semibold w-32 shrink-0">National ID</span>
+                    <span>{person.national_id}</span>
+                  </div>
+                  <div className="flex gap-4 px-4 py-2">
+                    <span className="font-semibold w-32 shrink-0">Date of Birth</span>
+                    <span>{person.dob}</span>
+                  </div>
+                  <div className="flex gap-4 px-4 py-2">
+                    <span className="font-semibold w-32 shrink-0">Gender</span>
+                    <span>{person.gender}</span>
+                  </div>
+                  <div className="flex gap-4 px-4 py-2">
+                    <span className="font-semibold w-32 shrink-0">Nationality</span>
+                    <span>{person.nationality}</span>
+                  </div>
+                  <div className="flex gap-4 px-4 py-2">
+                    <span className="font-semibold w-32 shrink-0">Occupation</span>
+                    <span>{person.occupation}</span>
                   </div>
                 </div>
-              )}
-              <div className="flex items-end justify-end mt-5">
-                <button
-                  className="border p-2 bg-gray-400"
-                  onClick={() => addNewOffenseForm(person.id)}
-                >
-                  Add New Offense
-                </button>
-              </div>
-            </div>
-          ))}
 
-          {newOffense && (
-            <div className="bg-slate-300/50 fixed inset-0 flex items-center justify-center z-50">
-              <div className="bg-white p-5 rounded-md w-1/2 max-h-[90vh] overflow-y-auto">
-              <div className="flex items-center justify-between mb-4">
-                <h1 className="font-bold">ADD NEW OFFENSE</h1>
-                <button className="text-gray-500 hover:text-black" onClick={() => setNewOffense(false)}>✕</button>
-              </div>
-
-              <div className="flex flex-col gap-4">
-                <div className="flex flex-col gap-1">
-                  <p className="font-semibold">Offense Category</p>
-                  <select
-                    className="border border-gray-300 rounded-md p-2 w-64"
-                    value={offenseCategory}
-                    onChange={(e) => setOffenseCategory(e.target.value)}>
-                    <option value="">-- select --</option>
-                    <option>Offenses against Person</option>
-                    <option>Offenses against Property</option>
-                    <option>Offenses against Public Order</option>
-                    <option>Offenses against State</option>
-                    <option>Narcotic Offenses</option>
-                    <option>Sexual Offenses</option>
-                    <option>Offenses Involving Minors</option>
-                    <option>economic and financial offenses</option>
-                    <option>cybercrime offenses</option>
-                    <option>road traffic offenses</option>
-                    <option>immigration offenses</option>
-                  </select>
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <p className="font-semibold">Severity</p>
-                  <select
-                    className="border border-gray-300 rounded-md p-2 w-48"
-                    value={severity}
-                    onChange={(e) => setSeverity(e.target.value)}>
-                    <option value="">-- select --</option>
-                    <option>low</option>
-                    <option>medium</option>
-                    <option>high</option>
-                  </select>
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <p className="font-semibold">Date of Offense</p>
-                  <input
-                    className="border border-gray-300 rounded-md p-2 w-48"
-                    type="text"
-                    value={dateOfOffense}
-                    onChange={(e) => setDateOfOffense(e.target.value)}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <p className="font-semibold">Conviction Status</p>
-                  <select
-                    className="border border-gray-300 rounded-md p-2 w-48"
-                    value={convictionStatus}
-                    onChange={(e) => setConvictionStatus(e.target.value)}>
-                    <option value="">-- select --</option>
-                    <option>convicted</option>
-                    <option>acquitted</option>
-                    <option>pending</option>
-                  </select>
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <p className="font-semibold">Court <span className="text-gray-400 font-normal">(optional)</span></p>
-                  <input
-                    className="border border-gray-300 rounded-md p-2 w-64"
-                    type="text"
-                    value={court}
-                    onChange={(e) => setCourt(e.target.value)}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <p className="font-semibold">Case Number <span className="text-gray-400 font-normal">(optional)</span></p>
-                  <input
-                    className="border border-gray-300 rounded-md p-2 w-48"
-                    type="text"
-                    value={caseNumber}
-                    onChange={(e) => setCaseNumber(e.target.value)}
-                  />
-                </div>
-
-                <div className="flex flex-col gap-1">
-                  <p className="font-semibold">Description <span className="text-gray-400 font-normal">(optional)</span></p>
-                  <input
-                    className="border border-gray-300 rounded-md p-2 w-full"
-                    type="text"
-                    value={description}
-                    onChange={(e) => setDescription(e.target.value)}
-                  />
+                {person.offenses.length > 0 && (
+                  <div className="mt-6">
+                    <p className="font-bold mb-2 underline">OFFENSES LISTED</p>
+                    <div className="flex flex-col gap-3 ml-7">
+                      {person.offenses.map((offense: {id: string; category: string; conviction_status: string; severity: string; court: string; case_number: string; description: string}, index: number) => (
+                        <div key={offense.id} className="border border-gray-200 rounded-md divide-y divide-gray-200">
+                          <div className="px-4 py-2 bg-gray-50 flex justify-between">
+                            <span className="font-semibold text-sm">Offense {index + 1}</span>
+                            <p className="text-blue-500 hover:text-blue-700 cursor-pointer">Edit</p>
+                          </div>
+                          <div className="flex gap-4 px-4 py-2">
+                            <span className="font-semibold w-36 shrink-0">Category</span>
+                            <span>{offense.category}</span>
+                          </div>
+                          <div className="flex gap-4 px-4 py-2">
+                            <span className="font-semibold w-36 shrink-0">Conviction Status</span>
+                            <span>{offense.conviction_status}</span>
+                          </div>
+                          <div className="flex gap-4 px-4 py-2">
+                            <span className="font-semibold w-36 shrink-0">Severity</span>
+                            <span>{offense.severity}</span>
+                          </div>
+                          <div className="flex gap-4 px-4 py-2">
+                            <span className="font-semibold w-36 shrink-0">Court</span>
+                            <span>{offense.court}</span>
+                          </div>
+                          <div className="flex gap-4 px-4 py-2">
+                            <span className="font-semibold w-36 shrink-0">Case Number</span>
+                            <span>{offense.case_number}</span>
+                          </div>
+                          <div className="flex gap-4 px-4 py-2">
+                            <span className="font-semibold w-36 shrink-0">Description</span>
+                            <span>{offense.description}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                <div className="flex items-end justify-end mt-5">
+                  <button
+                    className="border p-2 bg-gray-400"
+                    onClick={() => addNewOffenseForm(person.id)}
+                  >
+                    Add New Offense
+                  </button>
                 </div>
               </div>
+            ))}
 
-              <div className="flex justify-end mt-5">
-                <button className="border p-2 bg-gray-300 hover:bg-green-400" onClick={saveAddedOffense}>
-                  Save Offense
-                </button>
+            {newOffense && (
+              <div className="bg-slate-300/50 fixed inset-0 flex items-center justify-center z-50">
+                <div className="bg-white p-5 rounded-md w-1/2 max-h-[90vh] overflow-y-auto">
+                <div className="flex items-center justify-between mb-4">
+                  <h1 className="font-bold">ADD NEW OFFENSE</h1>
+                  <button className="text-gray-500 hover:text-black" onClick={() => setNewOffense(false)}>✕</button>
+                </div>
+
+                <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-1">
+                    <p className="font-semibold">Offense Category</p>
+                    <select
+                      className="border border-gray-300 rounded-md p-2 w-64"
+                      value={offenseCategory}
+                      onChange={(e) => setOffenseCategory(e.target.value)}>
+                      <option value="">-- select --</option>
+                      <option>Offenses against Person</option>
+                      <option>Offenses against Property</option>
+                      <option>Offenses against Public Order</option>
+                      <option>Offenses against State</option>
+                      <option>Narcotic Offenses</option>
+                      <option>Sexual Offenses</option>
+                      <option>Offenses Involving Minors</option>
+                      <option>economic and financial offenses</option>
+                      <option>cybercrime offenses</option>
+                      <option>road traffic offenses</option>
+                      <option>immigration offenses</option>
+                    </select>
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <p className="font-semibold">Severity</p>
+                    <select
+                      className="border border-gray-300 rounded-md p-2 w-48"
+                      value={severity}
+                      onChange={(e) => setSeverity(e.target.value)}>
+                      <option value="">-- select --</option>
+                      <option>low</option>
+                      <option>medium</option>
+                      <option>high</option>
+                    </select>
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <p className="font-semibold">Date of Offense</p>
+                    <input
+                      className="border border-gray-300 rounded-md p-2 w-48"
+                      type="text"
+                      value={dateOfOffense}
+                      onChange={(e) => setDateOfOffense(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <p className="font-semibold">Conviction Status</p>
+                    <select
+                      className="border border-gray-300 rounded-md p-2 w-48"
+                      value={convictionStatus}
+                      onChange={(e) => setConvictionStatus(e.target.value)}>
+                      <option value="">-- select --</option>
+                      <option>convicted</option>
+                      <option>acquitted</option>
+                      <option>pending</option>
+                    </select>
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <p className="font-semibold">Court <span className="text-gray-400 font-normal">(optional)</span></p>
+                    <input
+                      className="border border-gray-300 rounded-md p-2 w-64"
+                      type="text"
+                      value={court}
+                      onChange={(e) => setCourt(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <p className="font-semibold">Case Number <span className="text-gray-400 font-normal">(optional)</span></p>
+                    <input
+                      className="border border-gray-300 rounded-md p-2 w-48"
+                      type="text"
+                      value={caseNumber}
+                      onChange={(e) => setCaseNumber(e.target.value)}
+                    />
+                  </div>
+
+                  <div className="flex flex-col gap-1">
+                    <p className="font-semibold">Description <span className="text-gray-400 font-normal">(optional)</span></p>
+                    <input
+                      className="border border-gray-300 rounded-md p-2 w-full"
+                      type="text"
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex justify-end mt-5">
+                  <button className="border p-2 bg-gray-300 hover:bg-green-400" onClick={saveAddedOffense}>
+                    Save Offense
+                  </button>
+                </div>
               </div>
-            </div>
-            </div>
-          )}
-        </div>
-      )}
+              </div>
+            )}
+          </div>)}
     </div>
   );
 };
