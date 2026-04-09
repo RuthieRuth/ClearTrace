@@ -43,6 +43,10 @@ jobs:
         - name: Generate Prisma client
           run: npx prisma generate
           working-directory: backend
+          env:
+              CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
+              DATABASE_URL: ${{ secrets.DATABASE_URL }}
+              JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
         - name: Build backend
           run: npm run build
