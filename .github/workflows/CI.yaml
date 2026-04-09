@@ -39,6 +39,10 @@ jobs:
         - name: Install dependencies
           run: npm install
           working-directory: backend
+        
+        - name: Generate Prisma client
+          run: npx prisma generate
+          working-directory: backend
 
         - name: Build backend
           run: npm run build
