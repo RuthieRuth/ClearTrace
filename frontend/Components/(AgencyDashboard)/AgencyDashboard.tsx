@@ -14,6 +14,12 @@ const AgencyDashboard = () => {
       <div className="flex flex-1">
         <AgencySidebar onSelectTab={setActiveTab} activeTab={activeTab} />
         <main className="flex-1 p-6">
+          {activeTab === "home" && 
+            <div className="space-y-16" >
+              <p> Agency Dashboard</p>
+              <p>Welcome to the Agency Dashboard!</p>
+            </div>
+          }
           {activeTab === "search" && <Search />}
         </main>
       </div>
