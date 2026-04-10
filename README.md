@@ -6,9 +6,11 @@
 
 ## Overview
 
-ClearTrace is a multi-tenant SaaS platform for centralising access to sensitive records with strict, role-based control and full audit trails. It connects record-holding organisations with authorised third parties who require verified information for legitimate purposes — all through a governed, permission-gated interface.
+ClearTrace is a controlled-access record management system built around a multi-tiered Role-Based Access Control (RBAC) model. A central authority owns and manages the data. Authorised agencies can query it at different permission levels depending on their role. Private companies can submit formal requests to access specific records — such as background checks — through a request and approval workflow.
 
-Access is tiered by organisation type and individual role, ensuring each user sees only what they are permitted to see.
+Every action is logged in a full audit trail. Access is tiered by organisation type and individual role, ensuring each user sees only what they are permitted to see.
+
+In its current form, ClearTrace operates as a single, self-contained registry — equivalent to one tenant in a SaaS model. The architecture is designed with that future in mind: multiple independent registries (e.g. different jurisdictions) could each run as isolated tenants on the same platform.
 
 ---
 
