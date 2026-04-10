@@ -48,7 +48,7 @@ export class UsersService {
           username: data.username,
           role: data.role,
           agency_type: data.agency_type || null,
-          company_id: data.company_id,
+          company_id: data.company_id || null,
         },
       });
 

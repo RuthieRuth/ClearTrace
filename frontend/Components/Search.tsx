@@ -3,7 +3,6 @@
 
 import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
-
 import { useState } from "react";
 import { useRouter } from 'next/navigation'
 
@@ -28,8 +27,7 @@ interface Person {
   offenses: Offense[]
 }
 
-
-const Search = () => {
+const Search = ({ onAddPerson }: { onAddPerson?: () => void }) => {
   const { getToken } = useAuth();
   const [resultBox, setResultBox] = useState<Person[] | null>(null);
   const [query, setQuery] = useState("");
@@ -142,8 +140,9 @@ const Search = () => {
             <button 
               className="flex justify-center self-center border p-2 mt-5" 
               onClick={() => {
-                console.log("add new person clicked")
-                router.push("/new-person")
+                console.log("Add new person button clicked");
+                if (onAddPerson) onAddPerson()
+                else router.push("/new-person")
               }}>
               Add new person
             </button>

@@ -29,7 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <ClerkProvider>
+        <ClerkProvider afterSignInUrl="/dashboard">
           <ApplicationNavBar />
           {children}
         </ClerkProvider>

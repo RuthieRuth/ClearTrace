@@ -5,7 +5,7 @@ interface SidebarProps {
   activeTab: string;
 }
 
-const GovtSidebar = ({ onSelectTab, activeTab }: SidebarProps) => {
+const AgencySidebar = ({ onSelectTab, activeTab }: SidebarProps) => {
   return (
     <div className='flex flex-col gap-2 w-48 border-r min-h-full p-4'>
       <button
@@ -20,12 +20,6 @@ const GovtSidebar = ({ onSelectTab, activeTab }: SidebarProps) => {
       >
         Search
       </button>
-      <button
-        className={`p-2 text-left rounded border ${activeTab === 'newPerson' ? 'bg-gray-100 font-semibold' : ''}`}
-        onClick={() => onSelectTab('newPerson')}
-      >
-        New Person
-      </button>
       <button className='p-2 text-left rounded border'>
         People / Logs
       </button>
@@ -33,4 +27,4 @@ const GovtSidebar = ({ onSelectTab, activeTab }: SidebarProps) => {
   )
 }
 
-export default GovtSidebar
+export default AgencySidebar

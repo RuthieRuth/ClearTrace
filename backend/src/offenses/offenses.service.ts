@@ -9,12 +9,12 @@ export class OffensesService {
   constructor(private prisma: PrismaService) {}
 
   async findAll(user: User) {
-    // superadmin users can only see all offenses
-    if (user.role === 'superadmin') {
+    // superadmin and data_officer users can only see all offenses
+    if (user.role === 'superadmin' || user.role === 'data_officer') {
       return this.prisma.offense.findMany();
     }
 
-    // A. government users can only see all offenses that are related to their access scope
+    // A. Agency users (who are goverment agency workers) users can only see all offenses that are related to their access scope
     // A1. get all the offenses per person
     const accessScope = await this.prisma.userAccessScope.findMany({
       where: {

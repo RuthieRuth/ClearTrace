@@ -16,10 +16,10 @@ datasource db {
 
 enum Role {
   superadmin
-  government
+  data_officer
+  agency_head
+  agency_staff
   company
-  police
-  courts
   @@map("role")
 }
 
