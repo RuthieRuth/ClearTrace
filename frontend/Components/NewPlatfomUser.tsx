@@ -5,6 +5,7 @@ import { useAuth } from "@clerk/nextjs";
 
 type Props = {
   onClose: () => void;
+  context?: 'agency' | 'company' | 'all';
 };
 
 interface AgencyTypeDefaults {
@@ -14,14 +15,14 @@ interface AgencyTypeDefaults {
 const agencyTypeDefaults: AgencyTypeDefaults = {
   police: ['offenses_against_person', 'offenses_against_property', 'offenses_against_public_order', 'offenses_against_state', 'narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors', 'economic_and_financial_offenses', 'cybercrime_offenses', 'road_traffic_offenses', 'immigration_offenses'],  
   courts: ['offenses_against_person', 'offenses_against_property', 'offenses_against_public_order', 'offenses_against_state', 'narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors', 'economic_and_financial_offenses', 'cybercrime_offenses', 'road_traffic_offenses', 'immigration_offenses'],
-  prison: ['offenses_against_person', 'offenses_against_public_order', 'offenses_against_state', 'narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors'],
+  prisons: ['offenses_against_person', 'offenses_against_public_order', 'offenses_against_state', 'narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors'],
   education: ['offenses_against_person','offenses_against_public_order', 'narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors'],
   health: ['narcotic_offenses', 'sexual_offenses', 'offenses_involving_minors'],
   immigration: ['offenses_against_state','narcotic_offenses','immigration_offenses'],
 };
 
 
-const NewEntry = ({ onClose }: Props) => {
+const NewEntry = ({ onClose, context='all' }: Props) => {
   const [fullname, setFullname] = useState('')
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
@@ -29,6 +30,9 @@ const NewEntry = ({ onClose }: Props) => {
   const [agencyType, setAgencyType] = useState('')
   const [confirmationBox, setConfirmationBox] = useState(false)
   const [offenseAccess, setOffenseAccess] = useState<string[]>([])
+  const [agencyRole, setAgencyRole] = useState('')
+  const [phone, setPhone] = useState('')
+  const [companyId, setCompanyId] = useState('')
 
   const { getToken } = useAuth()
 
@@ -49,7 +53,7 @@ const NewEntry = ({ onClose }: Props) => {
   const submitEntry = async () => {
     const token = await getToken()
     axios.post('http://localhost:3000/users',
-      { full_name: fullname, username, password, role, agency_type: agencyType, offense_access: offenseAccess },
+      { full_name: fullname, username, password, role: role === 'agency' ? agencyRole : role, agency_type: agencyType, company_id: companyId, offense_access: offenseAccess },
       { headers: { Authorization: `Bearer ${token}` } }
     )
       .then(response => {
@@ -85,74 +89,106 @@ const NewEntry = ({ onClose }: Props) => {
           <select 
             className="col-start-1 row-start-1 appearance-none bg-gray-50 dark:bg-gray-800 ..."
             value={role}
-            onChange={(e) => setRole(e.target.value)}>
-            <option value="">-- select --</option>
-            <option value="government">government</option>
-            <option value="company">company</option>
-            <option value="superadmin">superadmin</option>
-          </select>
-        </div>
-      </div>
-
-      <div className="flex gap-5 mb-2 ">
-        <p className="mt-5">Agency Type:</p>
-        <div className="grid">
-          <select 
-            className="col-start-1 row-start-1 appearance-none bg-gray-50 dark:bg-gray-800 ..."
-            value={agencyType}
             onChange={(e) => {
-              setAgencyType(e.target.value)
-              setOffenseAccess(agencyTypeDefaults[e.target.value] ?? []) 
-            }}>
+              setRole(e.target.value)
+              setAgencyType('')
+              setAgencyRole('')
+              setOffenseAccess([])
+              setCompanyId('') }}>
             <option value="">-- select --</option>
-            <option value="police">police</option>
-            <option value="immigration">immigration</option>
-            <option value="courts">courts</option>
-            <option value="prison">prison</option>
-            <option value="education">education</option>
-            <option value="health">health</option>
+            {(context === 'all') && <option value="superadmin">Superadmin</option>}
+            {(context === 'all' || context === 'agency') && <option value="data_officer">Data Officer</option>}
+            {(context === 'all' || context === 'agency') && <option value="agency">Agency</option>}
+            {(context === 'all' || context === 'company') && <option value="company">Company</option>}
+
           </select>
         </div>
       </div>
+     
+     {(role === 'agency') && (
+        <div className="flex gap-5 mb-2 ">
+          <p className="mt-5">Agency Type:</p>
+          <div className="grid">
+            <select 
+              className="col-start-1 row-start-1 appearance-none bg-gray-50 dark:bg-gray-800 ..."
+              value={agencyType}
+              onChange={(e) => {
+                setAgencyType(e.target.value)
+                setOffenseAccess(agencyTypeDefaults[e.target.value] ?? []) 
+              }}>
+              <option value="">-- select --</option>
+              <option value="police">police</option>
+              <option value="immigration">immigration</option>
+              <option value="courts">courts</option>
+              <option value="prisons">prisons</option>
+              <option value="education">education</option>
+              <option value="health">health</option>
+            </select>
+          </div>
+        </div>
+      )}
 
-      <div>
-        <p className="mt-5">Offense Category Access</p>
-        <div className="grid grid-cols-2 gap-2 mt-2 mb-4">
-          <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('offenses_against_person')} checked={offenseAccess.includes('offenses_against_person')} /> Offenses Against Person
+      {role === 'agency' && agencyType !== '' && (
+        <div className="flex gap-5 mb-2">
+          <p className="mt-1">Agency Role:</p>
+          <label className="flex items-center gap-2">
+            <input type="radio" name="agencyRole" value="agency_head" checked={agencyRole === 'agency_head'} onChange={(e) => setAgencyRole(e.target.value)} />
+            Agency Head
           </label>
-          <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('offenses_against_property')} checked={offenseAccess.includes('offenses_against_property')} /> Offenses Against Property
-          </label>
-          <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('offenses_against_public_order')} checked={offenseAccess.includes('offenses_against_public_order')} /> Offenses Against Public Order
-          </label>
-          <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('offenses_against_state')} checked={offenseAccess.includes('offenses_against_state')} /> Offenses Against State
-          </label>
-          <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('narcotic_offenses')} checked={offenseAccess.includes('narcotic_offenses')} /> Narcotic Offenses
-          </label>
-          <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('sexual_offenses')} checked={offenseAccess.includes('sexual_offenses')} /> Sexual Offenses
-          </label>
-          <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('offenses_involving_minors')} checked={offenseAccess.includes('offenses_involving_minors')} /> Offenses Involving Minors
-          </label>
-          <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('economic_and_financial_offenses')} checked={offenseAccess.includes('economic_and_financial_offenses')} /> Economic & Financial Offenses
-          </label>
-          <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('cybercrime_offenses')} checked={offenseAccess.includes('cybercrime_offenses')} /> Cybercrime Offenses
-          </label>
-          <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('road_traffic_offenses')} checked={offenseAccess.includes('road_traffic_offenses')} /> Road Traffic Offenses
-          </label>
-          <label>
-            <input type="checkbox" onChange={() => selectOffenseAccess('immigration_offenses')} checked={offenseAccess.includes('immigration_offenses')} /> Immigration Offenses
+          <label className="flex items-center gap-2">
+            <input type="radio" name="agencyRole" value="agency_staff" checked={agencyRole === 'agency_staff'} onChange={(e) => setAgencyRole(e.target.value)} />
+            Agency Staff
           </label>
         </div>
+      )}
+
+      {role === 'company' && (
+        <div className="flex gap-5 mb-2">
+          <p className="mt-1">Company ID:</p>
+          <input className="border border-gray-300 rounded-md p-2" type="text" value={companyId} onChange={(e) => setCompanyId(e.target.value)} />
+        </div>
+      )}
+
+      {agencyType && (
+        <div>
+          <p className="mt-5">Offense Category Access</p>
+          <div className="grid grid-cols-2 gap-2 mt-2 mb-4">
+            <label>
+              <input type="checkbox" onChange={() => selectOffenseAccess('offenses_against_person')} checked={offenseAccess.includes('offenses_against_person')} /> Offenses Against Person
+            </label>
+            <label>
+              <input type="checkbox" onChange={() => selectOffenseAccess('offenses_against_property')} checked={offenseAccess.includes('offenses_against_property')} /> Offenses Against Property
+            </label>
+            <label>
+              <input type="checkbox" onChange={() => selectOffenseAccess('offenses_against_public_order')} checked={offenseAccess.includes('offenses_against_public_order')} /> Offenses Against Public Order
+            </label>
+            <label>
+              <input type="checkbox" onChange={() => selectOffenseAccess('offenses_against_state')} checked={offenseAccess.includes('offenses_against_state')} /> Offenses Against State
+            </label>
+            <label>
+              <input type="checkbox" onChange={() => selectOffenseAccess('narcotic_offenses')} checked={offenseAccess.includes('narcotic_offenses')} /> Narcotic Offenses
+            </label>
+            <label>
+              <input type="checkbox" onChange={() => selectOffenseAccess('sexual_offenses')} checked={offenseAccess.includes('sexual_offenses')} /> Sexual Offenses
+            </label>
+            <label>
+              <input type="checkbox" onChange={() => selectOffenseAccess('offenses_involving_minors')} checked={offenseAccess.includes('offenses_involving_minors')} /> Offenses Involving Minors
+            </label>
+            <label>
+              <input type="checkbox" onChange={() => selectOffenseAccess('economic_and_financial_offenses')} checked={offenseAccess.includes('economic_and_financial_offenses')} /> Economic & Financial Offenses
+            </label>
+            <label>
+              <input type="checkbox" onChange={() => selectOffenseAccess('cybercrime_offenses')} checked={offenseAccess.includes('cybercrime_offenses')} /> Cybercrime Offenses
+            </label>
+            <label>
+              <input type="checkbox" onChange={() => selectOffenseAccess('road_traffic_offenses')} checked={offenseAccess.includes('road_traffic_offenses')} /> Road Traffic Offenses
+            </label>
+            <label>
+              <input type="checkbox" onChange={() => selectOffenseAccess('immigration_offenses')} checked={offenseAccess.includes('immigration_offenses')} /> Immigration Offenses
+            </label>
+          </div>
       </div>
+      )}
      
 
       <h1 className="font-semibold ">LOG IN DETAILS</h1>

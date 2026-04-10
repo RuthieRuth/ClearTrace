@@ -7,6 +7,8 @@ import NavBar from "../DashboardLayoutPerRole/NavBar";
 //import NewEntry from "../NewEntry";
 import Agencies from "../Agencies";
 import Companies from "../Companies";
+import NewPerson from "../NewPerson";
+
 
 const SuperAdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("home");
@@ -19,11 +21,12 @@ const SuperAdminDashboard = () => {
         <main className="flex-1 p-6">
           {activeTab === "home" && 
             <div className="space-y-16" >
-              <p>Dashboard</p>
+              <p> Super Admin Dashboard</p>
               <p>Welcome to the Super Admin Dashboard!</p>
             </div>
           }
-          {activeTab === "search" && <Search />}
+          {activeTab === "search" && <Search onAddPerson={() => setActiveTab('newPerson')} />}
+          {activeTab === "newPerson" && <NewPerson />}
           {/* {activeTab === "newEntry" && <NewEntry />} */}
           {activeTab === "agencies" && <Agencies />}
           {activeTab === "companies" && <Companies />}

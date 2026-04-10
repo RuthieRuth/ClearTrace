@@ -28,10 +28,10 @@ export class UsersController {
   @Get('me')
   @Roles(
     Role.superadmin,
-    Role.government,
+    Role.data_officer,
+    Role.agency_head,
+    Role.agency_staff,
     Role.company,
-    Role.police,
-    Role.courts,
   )
   findMe(@Req() req: any) {
     return this.usersService.findMe(req.user.id);

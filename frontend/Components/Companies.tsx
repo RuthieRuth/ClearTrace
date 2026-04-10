@@ -21,7 +21,7 @@ const Companies = () => {
 
       {newEntry && (
         <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex justify-center items-center">
-          <NewEntry onClose={() => setNewEntry(false)} />
+          <NewEntry onClose={() => setNewEntry(false)} context="company" />
         </div>
       )}
     </div>

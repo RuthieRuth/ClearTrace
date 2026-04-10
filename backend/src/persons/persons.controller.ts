@@ -20,7 +20,7 @@ import { Role } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.superadmin, Role.government)
+@Roles(Role.superadmin, Role.data_officer, Role.agency_head, Role.agency_staff)
 @Controller('persons')
 export class PersonsController {
   constructor(
