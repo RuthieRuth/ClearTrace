@@ -94,13 +94,13 @@ const NewEntry = ({ onClose, context='all' }: Props) => {
       <p onClick={onClose} className="flex items-end justify-end mb-4 hover:underline">close</p>
 
       <h1 className="font-semibold">PERSONAL DETAILS</h1>
-      <div className="flex gap-5 mb-2">
+      <div className="flex gap-5 mb-5">
         <p className="mt-1">Full Name:</p>
         <input className="border border-gray-300 rounded-md p-2" type="text" value={fullname} onChange={(e) => setFullname(e.target.value)} />
       </div>
 
       <h1 className="font-semibold">ROLE AND ACCESS</h1>
-      <div className="flex gap-5 mb-2 ">
+      <div className="flex gap-5 mb-2">
         <p className="mt-1">Role:</p>
         <div className="grid">
           <select 
@@ -130,7 +130,7 @@ const NewEntry = ({ onClose, context='all' }: Props) => {
       </div>
      
      {(role === 'agency') && (
-        <div className="flex gap-5 mb-2 ">
+        <div className="flex gap-5 mb-5 ">
           <p className="mt-5">Agency Type:</p>
           <div className="grid">
             <select 

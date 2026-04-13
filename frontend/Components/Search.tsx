@@ -79,10 +79,8 @@ const Search = ({ onAddPerson }: { onAddPerson?: () => void }) => {
     const token = await getToken();
 
     try {
-      await axios.post(
-        "http://localhost:3000/offenses",
-        {
-          category: offenseCategory,
+      await axios.post("http://localhost:3000/offenses",
+        { category: offenseCategory,
           severity,
           date_of_offense: dateOfOffense,
           conviction_status: convictionStatus,
