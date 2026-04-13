@@ -1,18 +1,18 @@
-import React, { useState } from 'react'
-import SearchResults from './sharedAcrossApp/SearchResults'
-import Link from 'next/link'
+import React, { useState } from "react";
+import SearchResults from "./sharedAcrossApp/RequestedResults";
+import Link from "next/link";
 
 const DataHistory = () => {
   const [viewDetails, setViewDetails] = useState(false);
 
-  console.log('view details clicked:', viewDetails)
+  console.log("view details clicked:", viewDetails);
 
   return (
     <div>
-      <h1 className='mb-5'>Data History as a tracking tool</h1>
+      <h1 className="mb-5">Data History as a tracking tool</h1>
 
-      <table className='table-auto'>
-        <thead >
+      <table className="table-auto">
+        <thead>
           <tr>
             <th>no.</th>
             <th>Person</th>
@@ -38,7 +38,7 @@ const DataHistory = () => {
 
       {viewDetails && <SearchResults />}
     </div>
-  )
-}
+  );
+};
 
-export default DataHistory
+export default DataHistory;
