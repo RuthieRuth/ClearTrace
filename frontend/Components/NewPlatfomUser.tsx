@@ -30,9 +30,11 @@ const NewEntry = ({ onClose, context='all' }: Props) => {
   const [agencyType, setAgencyType] = useState('')
   const [confirmationBox, setConfirmationBox] = useState(false)
   const [offenseAccess, setOffenseAccess] = useState<string[]>([])
+  const [companySelection, setCompanySelection] = useState('')
   const [agencyRole, setAgencyRole] = useState('')
   const [phone, setPhone] = useState('')
   const [companyId, setCompanyId] = useState('')
+  const [listCompanies, setListCompanies] = useState<[]>([])
 
   const { getToken } = useAuth()
 
@@ -40,6 +42,7 @@ const NewEntry = ({ onClose, context='all' }: Props) => {
     setConfirmationBox(true)
   }
 
+  // dropdowns for offense
   const selectOffenseAccess = (category: string) => {
     setOffenseAccess(prev => {
       const selectedScope = prev.includes(category) 
@@ -50,14 +53,28 @@ const NewEntry = ({ onClose, context='all' }: Props) => {
     })
   }
 
+  const fetchCompanies = async () => {
+    const token = await getToken()
+    try {
+      const response = await axios.get('http://localhost:3000/companies', {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+      return response.data
+    } catch (error) {
+      console.error('Error fetching companies:', error)
+      return []
+    }
+  }
+
   const submitEntry = async () => {
     const token = await getToken()
     axios.post('http://localhost:3000/users',
-      { full_name: fullname, username, password, role: role === 'agency' ? agencyRole : role, agency_type: agencyType, company_id: companyId, offense_access: offenseAccess },
+      { full_name: fullname, username, password, role: role === 'agency' ? agencyRole : role, agency_type: agencyType, company_id: companyId || null, offense_access: offenseAccess },
       { headers: { Authorization: `Bearer ${token}` } }
     )
       .then(response => {
         console.log('Entry saved successfully:', response.data);
+        alert('User saved successfully.')
         setConfirmationBox(false)
         onClose()
       })
@@ -77,13 +94,13 @@ const NewEntry = ({ onClose, context='all' }: Props) => {
       <p onClick={onClose} className="flex items-end justify-end mb-4 hover:underline">close</p>
 
       <h1 className="font-semibold">PERSONAL DETAILS</h1>
-      <div className="flex gap-5 mb-2">
+      <div className="flex gap-5 mb-5">
         <p className="mt-1">Full Name:</p>
         <input className="border border-gray-300 rounded-md p-2" type="text" value={fullname} onChange={(e) => setFullname(e.target.value)} />
       </div>
 
       <h1 className="font-semibold">ROLE AND ACCESS</h1>
-      <div className="flex gap-5 mb-2 ">
+      <div className="flex gap-5 mb-2">
         <p className="mt-1">Role:</p>
         <div className="grid">
           <select 
@@ -94,7 +111,14 @@ const NewEntry = ({ onClose, context='all' }: Props) => {
               setAgencyType('')
               setAgencyRole('')
               setOffenseAccess([])
-              setCompanyId('') }}>
+              setCompanyId('') 
+              if (e.target.value === 'company') {
+                fetchCompanies()
+                .then(companies => {
+                  setListCompanies(companies)
+                })
+              }
+            }}>
             <option value="">-- select --</option>
             {(context === 'all') && <option value="superadmin">Superadmin</option>}
             {(context === 'all' || context === 'agency') && <option value="data_officer">Data Officer</option>}
@@ -106,7 +130,7 @@ const NewEntry = ({ onClose, context='all' }: Props) => {
       </div>
      
      {(role === 'agency') && (
-        <div className="flex gap-5 mb-2 ">
+        <div className="flex gap-5 mb-5 ">
           <p className="mt-5">Agency Type:</p>
           <div className="grid">
             <select 
@@ -145,7 +169,17 @@ const NewEntry = ({ onClose, context='all' }: Props) => {
       {role === 'company' && (
         <div className="flex gap-5 mb-2">
           <p className="mt-1">Company ID:</p>
-          <input className="border border-gray-300 rounded-md p-2" type="text" value={companyId} onChange={(e) => setCompanyId(e.target.value)} />
+          <select 
+              className="col-start-1 row-start-1 appearance-none bg-gray-50 dark:bg-gray-800 ..."
+              value={companySelection}
+              onChange={(e) => {
+                setCompanySelection(e.target.value)
+              }}>
+            <option value="">-- select --</option>
+            {listCompanies.map((company: { id: string; name: string }) => (
+              <option key={company.id} value={company.id}>{company.name}</option>
+            ))}
+          </select>
         </div>
       )}
 

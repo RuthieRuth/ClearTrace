@@ -10,7 +10,7 @@ const SuperAdminSideBar = ({onSelectTab, activeTab}: SidebarProps) => {
   return (
     
     <div className='flex flex-col gap-2 w-48 border-r min-h-full p-4'>
-      <p className='font-light p-2'>overview</p>
+      <p className='font-light p-2'>OVERVIEW</p>
       <button
         className={`p-2 text-left rounded border ${activeTab === 'home' ? 'bg-gray-100 font-semibold' : ''}`}
         onClick={() => onSelectTab('home')}
@@ -23,7 +23,7 @@ const SuperAdminSideBar = ({onSelectTab, activeTab}: SidebarProps) => {
       >
         New Entry
       </button> */}
-       <p className='font-light p-2'>management</p>
+       <p className='font-light p-2'>MANAGEMENT</p>
       <button
         className={`p-2 text-left rounded border ${activeTab === 'agencies' ? 'bg-gray-100 font-semibold' : ''}`}
         onClick={() => onSelectTab('agencies')}
@@ -42,7 +42,7 @@ const SuperAdminSideBar = ({onSelectTab, activeTab}: SidebarProps) => {
       >
         People / Logs
       </button>
-       <p className='font-light p-2'>records</p>
+       <p className='font-light p-2'>RECORDS</p>
        <button
         className={`p-2 text-left rounded border ${activeTab === 'search' ? 'bg-gray-100 font-semibold' : ''}`}
         onClick={() => onSelectTab('search')}

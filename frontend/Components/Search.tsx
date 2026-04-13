@@ -19,7 +19,7 @@ interface Offense {
 interface Person {
   id: string
   full_name: string
-  national_id: string
+  national_id_no: string
   dob: string
   gender: string
   nationality: string
@@ -28,7 +28,8 @@ interface Person {
 }
 
 const Search = ({ onAddPerson }: { onAddPerson?: () => void }) => {
-  const { getToken } = useAuth();
+  const { getToken, sessionClaims } = useAuth();
+  const role = (sessionClaims?.metadata as { role?: string })?.role;
   const [resultBox, setResultBox] = useState<Person[] | null>(null);
   const [query, setQuery] = useState("");
   const [dataResults, setDataResults] = useState<Person[]>([]);
@@ -78,10 +79,8 @@ const Search = ({ onAddPerson }: { onAddPerson?: () => void }) => {
     const token = await getToken();
 
     try {
-      await axios.post(
-        "http://localhost:3000/offenses",
-        {
-          category: offenseCategory,
+      await axios.post("http://localhost:3000/offenses",
+        { category: offenseCategory,
           severity,
           date_of_offense: dateOfOffense,
           conviction_status: convictionStatus,
@@ -160,7 +159,7 @@ const Search = ({ onAddPerson }: { onAddPerson?: () => void }) => {
                   </div>
                   <div className="flex gap-4 px-4 py-2">
                     <span className="font-semibold w-32 shrink-0">National ID</span>
-                    <span>{person.national_id}</span>
+                    <span>{person.national_id_no}</span>
                   </div>
                   <div className="flex gap-4 px-4 py-2">
                     <span className="font-semibold w-32 shrink-0">Date of Birth</span>
@@ -219,7 +218,10 @@ const Search = ({ onAddPerson }: { onAddPerson?: () => void }) => {
                     </div>
                   </div>
                 )}
-                <div className="flex items-end justify-end mt-5">
+
+                {/* don't show add offense button to superadmin and data officer */}
+                {(role === 'superadmin' || role === 'data_officer' || role === 'agency_head') && (
+                  <div className="flex items-end justify-end mt-5">
                   <button
                     className="border p-2 bg-gray-400"
                     onClick={() => addNewOffenseForm(person.id)}
@@ -227,6 +229,8 @@ const Search = ({ onAddPerson }: { onAddPerson?: () => void }) => {
                     Add New Offense
                   </button>
                 </div>
+                )}
+                
               </div>
             ))}
 
@@ -246,17 +250,17 @@ const Search = ({ onAddPerson }: { onAddPerson?: () => void }) => {
                       value={offenseCategory}
                       onChange={(e) => setOffenseCategory(e.target.value)}>
                       <option value="">-- select --</option>
-                      <option>Offenses against Person</option>
-                      <option>Offenses against Property</option>
-                      <option>Offenses against Public Order</option>
-                      <option>Offenses against State</option>
-                      <option>Narcotic Offenses</option>
-                      <option>Sexual Offenses</option>
-                      <option>Offenses Involving Minors</option>
-                      <option>economic and financial offenses</option>
-                      <option>cybercrime offenses</option>
-                      <option>road traffic offenses</option>
-                      <option>immigration offenses</option>
+                      <option value="offenses_against_person">Offenses against Person</option>
+                      <option value="offenses_against_property">Offenses against Property</option>
+                      <option value="offenses_against_public_order">Offenses against Public Order</option>
+                      <option value="offenses_against_state">Offenses against State</option>
+                      <option value="narcotic_offenses">Narcotic Offenses</option>
+                      <option value="sexual_offenses">Sexual Offenses</option>
+                      <option value="offenses_involving_minors">Offenses Involving Minors</option>
+                      <option value="economic_and_financial_offenses">Economic and Financial Offenses</option>
+                      <option value="cybercrime_offenses">Cybercrime Offenses</option>
+                      <option value="road_traffic_offenses">Road Traffic Offenses</option>
+                      <option value="immigration_offenses">Immigration Offenses</option>
                     </select>
                   </div>
 

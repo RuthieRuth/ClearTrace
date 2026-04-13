@@ -4,6 +4,7 @@ import { useState } from "react";
 import AgencySidebar from "../DashboardLayoutPerRole/AgencySidebar";
 import Search from "../Search";
 import NavBar from "../DashboardLayoutPerRole/NavBar";
+import NewPerson from "../NewPerson";
 
 const AgencyDashboard = () => {
   const [activeTab, setActiveTab] = useState("home");
@@ -20,7 +21,8 @@ const AgencyDashboard = () => {
               <p>Welcome to the Agency Dashboard!</p>
             </div>
           }
-          {activeTab === "search" && <Search />}
+          {activeTab === "search" && <Search onAddPerson={() => setActiveTab('newPerson')} />}
+          {activeTab === "newPerson" && <NewPerson />}
         </main>
       </div>
     </div>

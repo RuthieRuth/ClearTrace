@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 
-const SearchResults = () => {
+const RequestedResults = () => {
   const router = useRouter()
 
   return (
@@ -29,4 +29,4 @@ const SearchResults = () => {
   )
 }
 
-export default SearchResults
+export default RequestedResults

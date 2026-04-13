@@ -27,9 +27,8 @@ const SuperAdminDashboard = () => {
           }
           {activeTab === "search" && <Search onAddPerson={() => setActiveTab('newPerson')} />}
           {activeTab === "newPerson" && <NewPerson />}
-          {/* {activeTab === "newEntry" && <NewEntry />} */}
           {activeTab === "agencies" && <Agencies />}
-          {activeTab === "companies" && <Companies />}
+          {activeTab === "companies" && <Companies onClose={() => setActiveTab('companies')} />}
         </main>
       </div>
     </div>
