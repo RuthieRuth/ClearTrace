@@ -7,6 +7,7 @@ import { PersonsModule } from './persons/persons.module';
 import { OffensesModule } from './offenses/offenses.module';
 import { CompaniesModule } from './companies/companies.module';
 import { AuditLogsModule } from './audit-logs/audit-logs.module';
+import { RequestsModule } from './requests/requests.module';
 //import { AuthModule } from './auth/auth.module';
 
 @Module({
@@ -15,6 +16,7 @@ import { AuditLogsModule } from './audit-logs/audit-logs.module';
     PersonsModule,
     OffensesModule,
     CompaniesModule,
+    RequestsModule,
     AuditLogsModule,
     // AuthModule,
   ],
