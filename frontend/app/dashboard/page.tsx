@@ -14,7 +14,7 @@ export default function Dashboard() {
             try {
                 const token = await getToken()
                 //console.log('token:', token)
-                const response = await axios.get('http://localhost:3000/users/me', {
+                const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/me`, {
                 headers: { Authorization: `Bearer ${token}` }
                 })
                 //console.log('user:', response.data)

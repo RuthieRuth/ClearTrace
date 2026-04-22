@@ -48,7 +48,7 @@ const NewPerson = () => {
        const token = await getToken()
        try{
             // sending two separate POST requests to create person and offense entries
-        const getPerson= await axios .post('http://localhost:3000/persons', {
+        const getPerson= await axios .post(`${process.env.NEXT_PUBLIC_API_URL}/persons`, {
                 full_name: fullname,
                 national_id_no: nationalId,
                 dob: dob,
@@ -61,7 +61,7 @@ const NewPerson = () => {
 
             const personId =  getPerson.data.id;
         
-        await axios.post('http://localhost:3000/offenses', {
+        await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/offenses`, {
             category: offenseCategory,
             severity,
             date_of_offense: dateOfOffense,
