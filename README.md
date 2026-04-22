@@ -40,6 +40,7 @@ Work in progress — not ready for production use.
 - **Backend** — NestJS, TypeScript
 - **Database** — PostgreSQL, Prisma ORM
 - **Auth** — Clerk
+- **DevOps** — Docker, GitHub Actions (CI)
 
 ---
 
@@ -57,7 +58,52 @@ cleartrace/
 
 ## Getting started
 
-Local setup instructions will be added once the core modules are stable. Feel free to open an issue with questions in the meantime.
+### Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
+
+### Running with Docker
+
+1. Clone the repository
+2. Create a `.env` file at the project root (see `.env` structure below)
+3. Run:
+
+```bash
+docker compose up --build
+```
+
+- Frontend: http://localhost:3001
+- Backend: http://localhost:3000
+
+4. Run database migrations:
+
+```bash
+docker compose exec backend npx prisma migrate deploy
+```
+
+5. Seed the initial superadmin:
+
+```bash
+docker compose exec backend npx prisma db seed
+```
+
+To stop: `docker compose down`
+
+### Root `.env` file structure
+
+```
+# Backend
+DATABASE_URL=postgresql://USER:PASSWORD@database:5432/offense_registry
+JWT_SECRET=your_jwt_secret
+CLERK_SECRET_KEY=your_clerk_secret_key
+
+# Frontend
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_publishable_key
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/
+NEXT_PUBLIC_CLERK_AFTER_SIGN_OUT_URL=/login
+NEXT_PUBLIC_API_URL=http://localhost:3000
+```
 
 ---
 
