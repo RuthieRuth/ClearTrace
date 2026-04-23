@@ -28,7 +28,7 @@ export class RequestsController {
   @Post()
   @Roles(Role.company)
   async create(@Body() body: CreateRequestDto, @Req() req: Request) {
-    const clerkUser = req['user'];
+    const clerkUser = req['user'] as { id: string }; // shortcut for clerk user interface
     const extractUser = await this.prisma.user.findUnique({
       where: { clerk_id: clerkUser.id },
     });
@@ -41,6 +41,42 @@ export class RequestsController {
     return this.requestsService.create(body);
   }
 
+  // Company requests endpoints
+  @Get('company')
+  @Roles(Role.company)
+  async findAllCompanyRequests(@Req() req: Request) {
+    const clerkUser = req['user'] as { id: string };
+    const extractCompanyID = await this.prisma.user.findUnique({
+      where: { clerk_id: clerkUser.id },
+    });
+
+    if (!extractCompanyID?.company_id) {
+      throw new Error('User not found. Therefore no company id');
+    }
+
+    return this.requestsService.findAllCompanyRequests(
+      extractCompanyID.company_id,
+    );
+  }
+
+  @Get('company/:id')
+  @Roles(Role.company)
+  async findOneCompanyRequest(@Req() req: Request, @Param('id') id: string) {
+    const clerkUser = req['user'] as { id: string };
+    const extractCompanyID = await this.prisma.user.findUnique({
+      where: { clerk_id: clerkUser.id },
+    });
+
+    if (!extractCompanyID?.company_id) {
+      throw new Error('User not found. Therefore no company id');
+    }
+    return this.requestsService.findOneCompanyRequest(
+      id,
+      extractCompanyID.company_id,
+    );
+  }
+
+  // Superadmin and Data Officer endpoints
   @Get(':id')
   @Roles(Role.superadmin, Role.data_officer)
   findOne(@Param('id') id: string) {

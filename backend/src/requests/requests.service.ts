@@ -43,6 +43,29 @@ export class RequestsService {
     return this.prisma.request.findUnique({ where: { id } });
   }
 
+  // get all requests made by a specific company
+  findAllCompanyRequests(company_id: string) {
+    return this.prisma.request.findMany({
+      where: { company_id },
+      include: {
+        person: true,
+        company: true,
+        requested_by: true,
+      },
+    });
+  }
+
+  findOneCompanyRequest(id: string, company_id: string) {
+    return this.prisma.request.findFirst({
+      where: { id, company_id },
+      include: {
+        person: true,
+        company: true,
+        requested_by: true,
+      },
+    });
+  }
+
   // update the status of a request (approved, rejected)
   update(id: string, data: UpdateRequestDto) {
     return this.prisma.request.update({ where: { id }, data });

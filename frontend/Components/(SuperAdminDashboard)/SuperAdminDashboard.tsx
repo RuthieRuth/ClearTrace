@@ -8,7 +8,7 @@ import NavBar from "../DashboardLayoutPerRole/NavBar";
 import Agencies from "../Agencies";
 import Companies from "../Companies";
 import NewPerson from "../NewPerson";
-import RequestLists from "../RequestLists";
+import RequestLists from "../AdminRequestLists";
 
 
 const SuperAdminDashboard = () => {

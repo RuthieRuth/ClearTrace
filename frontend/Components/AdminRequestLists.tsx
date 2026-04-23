@@ -1,18 +1,18 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { getToken } from "@clerk/nextjs";
+import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 
-const RequestLists = () => {
+const AdminRequestLists = () => {
   const [requests, setRequests] = useState<any[]>([]);
   const [confirmAcceptBox, setConfimAcceptBox] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const { getToken } = useAuth();
 
   const fetchRequests = async () => {
     const token = await getToken();
-
     try {
       const response = await fetch("http://localhost:3000/requests", {
         headers: { Authorization: `Bearer ${token}` },
@@ -24,6 +24,10 @@ const RequestLists = () => {
       setError("Failed to fetch requests. Please try again.");
     }
   };
+
+    useEffect(() => {
+      fetchRequests();
+    }, []);
 
   const handleAccept = async (id: string) => {
     const token = await getToken();
@@ -62,9 +66,6 @@ const RequestLists = () => {
     console.log("Reject request clicked");
   };
 
-  useEffect(() => {
-    fetchRequests();
-  }, []);
 
   return (
     <div>
@@ -145,4 +146,4 @@ const RequestLists = () => {
   );
 };
 
-export default RequestLists;
+export default AdminRequestLists;

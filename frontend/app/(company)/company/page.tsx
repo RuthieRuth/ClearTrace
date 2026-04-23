@@ -4,7 +4,7 @@
 
 import CompanySideBar from "@/Components/DashboardLayoutPerRole/CompanySideBar";
 import { useState } from "react";
-import DataHistory from "@/Components/DataHistory";
+import DataHistory from "@/Components/RequestDataHistory";
 import RequestForm from "@/Components/RequestForm";
 import NavBar from "@/Components/DashboardLayoutPerRole/NavBar";
 
