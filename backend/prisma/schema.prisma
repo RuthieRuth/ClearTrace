@@ -69,7 +69,8 @@ enum Severity {
 enum RequestStatus {
   submitted
   in_review
-  ready
+  approved
+  rejected
   accessed
   expired
 

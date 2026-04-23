@@ -22,7 +22,8 @@ export class JwtAuthGuard implements CanActivate {
       const role = (payload.metadata as { role?: string })?.role;
       request['user'] = { id: payload.sub, role };
       return true;
-    } catch {
+    } catch (error) {
+      console.error('JWT verification failed:', error);
       throw new UnauthorizedException();
     }
   }

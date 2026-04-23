@@ -36,6 +36,12 @@ const SuperAdminSideBar = ({onSelectTab, activeTab}: SidebarProps) => {
       >
         Companies
       </button>
+       <button
+        className={`p-2 text-left rounded border ${activeTab === 'requests' ? 'bg-gray-100 font-semibold' : ''}`}
+        onClick={() => onSelectTab('requests')}
+      >
+        Requests
+      </button>
       <button
         className={`p-2 text-left rounded border ${activeTab === 'peopleLogs' ? 'bg-gray-100 font-semibold' : ''}`}
         onClick={() => onSelectTab('peopleLogs')}

@@ -8,6 +8,7 @@ import NavBar from "../DashboardLayoutPerRole/NavBar";
 import Agencies from "../Agencies";
 import Companies from "../Companies";
 import NewPerson from "../NewPerson";
+import RequestLists from "../AdminRequestLists";
 
 
 const SuperAdminDashboard = () => {
@@ -25,10 +26,11 @@ const SuperAdminDashboard = () => {
               <p>Welcome to the Super Admin Dashboard!</p>
             </div>
           }
-          {activeTab === "search" && <Search onAddPerson={() => setActiveTab('newPerson')} />}
-          {activeTab === "newPerson" && <NewPerson />}
           {activeTab === "agencies" && <Agencies />}
           {activeTab === "companies" && <Companies onClose={() => setActiveTab('companies')} />}
+          {activeTab === "search" && <Search onAddPerson={() => setActiveTab('newPerson')} />}
+          {activeTab === "newPerson" && <NewPerson />}
+          {activeTab === "requests" && <RequestLists />}
         </main>
       </div>
     </div>
