@@ -30,39 +30,54 @@ const RequestDataHistory = () => {
 
   return (
     <div>
-      <h1 className="mb-5">Company Page Dashboard</h1>
-      <p className="mb-5"> All Recents requests</p>
-      
-      {requests.length >= 1 
-        ? (
-          <table className="w-full border-collapse">
-            <thead>
-              <tr>
-                <th>no.</th>
-                <th>Person</th>
-                <th>Purpose</th>
-                <th>Submitted</th>
-                <th>Status</th>
-                <th>Expires</th>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-xl font-semibold text-gray-800">All Requests</h1>
+      </div>
+
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <table className="w-full text-sm text-left">
+          <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
+            <tr>
+              <th className="px-4 py-3">#</th>
+              <th className="px-4 py-3">Person</th>
+              <th className="px-4 py-3">Purpose</th>
+              <th className="px-4 py-3">Submitted</th>
+              <th className="px-4 py-3">Status</th>
+              <th className="px-4 py-3">Expires</th>
+            </tr>
+          </thead>
+          <tbody className="divide-y divide-gray-100">
+            {requests.map((request, index) => (
+              <tr key={index} className="bg-white hover:bg-gray-50 transition-colors">
+                <td className="px-4 py-3 text-gray-400">{index + 1}</td>
+                <td className="px-4 py-3">
+                  <p className="font-medium text-gray-800">{request.person.full_name}</p>
+                  <p className="text-xs text-gray-400">{request.person.national_id_no}</p>
+                </td>
+                <td className="px-4 py-3 text-gray-600">{request.purpose}</td>
+                <td className="px-4 py-3 text-gray-600">{new Date(request.submitted_at).toLocaleDateString()}</td>
+                <td className="px-4 py-3">
+                  <span className={
+                    request.status === "approved" ? "bg-green-100 text-green-700 px-2 py-1 rounded-full text-xs font-medium"
+                    : request.status === "rejected" ? "bg-red-100 text-red-700 px-2 py-1 rounded-full text-xs font-medium"
+                    : request.status === "expired" ? "bg-orange-100 text-orange-700 px-2 py-1 rounded-full text-xs font-medium"
+                    : "bg-gray-100 text-gray-600 px-2 py-1 rounded-full text-xs font-medium"
+                  }>
+                    {request.status}
+                  </span>
+                </td>
+                <td className="px-4 py-3 text-gray-600">
+                  {request.expires_at ? new Date(request.expires_at).toLocaleDateString() : "—"}
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {requests.map((request, index) => (
-                <tr key={index} className="border-b hover:bg-gray-50">
-                  <td>{index + 1}</td>
-                  <td className="flex flex-col">
-                    <p>{request.person.full_name}</p>
-                    <p>{request.person.national_id_no}</p>
-                  </td>
-                  <td>{request.purpose}</td>
-                  <td>{new Date(request.submitted_at).toLocaleDateString()}</td>
-                  <td>{request.status}</td>
-                  <td>{request.expires_at ? new Date(request.expires_at).toLocaleDateString() : '—'}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table> )
-        : (<p>No requests found.</p>) }
+            ))}
+          </tbody>
+        </table>
+      </div>
+
+      {requests.length === 0 && (
+        <p className="text-center text-gray-400 text-sm mt-8">No requests found.</p>
+      )}
     </div>
   );
 };
