@@ -4,9 +4,18 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 
+type Request = {
+  id: string;
+  company: { name: string };
+  purpose: string;
+  person: { national_id_no: string; full_name: string };
+  status: string;
+};
+
 const AdminRequestLists = () => {
-  const [requests, setRequests] = useState<any[]>([]);
+  const [requests, setRequests] = useState<Request[]>([]);
   const [confirmAcceptBox, setConfimAcceptBox] = useState(false);
+  const [selectedRequest, setSelectedRequest] = useState<Request | null>(null); //Track request
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const { getToken } = useAuth();
@@ -36,12 +45,9 @@ const AdminRequestLists = () => {
     setIsLoading(true);
 
     axios
-      .patch(
-        `http://localhost:3000/requests/${id}`,
+      .patch(`http://localhost:3000/requests/${id}`,
         { status: "approved" },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        },
+        { headers: { Authorization: `Bearer ${token}` }},
       )
       .then((response) => {
         console.log("Request accepted:", response.data);
@@ -57,15 +63,20 @@ const AdminRequestLists = () => {
       });
   };
 
-  const confirmAccept = () => {
+  const confirmAccept = (id: string) => {
     console.log("Accept button clicked");
     setConfimAcceptBox(true);
+    setSelectedRequest(requests.find(r => r.id === id) || null);
   };
 
-  const handleReject = () => {
+  const handleReject = (id: string) => {
     console.log("Reject request clicked");
+    setConfimAcceptBox(true);
+    setSelectedRequest(requests.find(r => r.id === id) || null);
   };
 
+   // To be used in conjuction with 'show Confirmation Box per Request selected'
+   const selected = requests.find(r => r.id === selectedRequest?.id );
 
   return (
     <div>
@@ -105,13 +116,14 @@ const AdminRequestLists = () => {
                   {request.status === "submitted" && (
                     <div className="flex gap-2">
                       <button
-                        onClick={confirmAccept}
+                      // update and add track results box
+                        onClick={() => confirmAccept(request.id)} 
                         className="bg-emerald-500 hover:bg-emerald-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
                       >
                         Accept
                       </button>
                       <button
-                        onClick={handleReject}
+                        onClick={() => handleReject(request.id)}
                         className="bg-red-500 hover:bg-red-600 text-white text-xs font-medium px-3 py-1.5 rounded-lg transition-colors"
                       >
                         Reject
@@ -119,47 +131,48 @@ const AdminRequestLists = () => {
                     </div>
                   )}
                 </td>
-
-                {confirmAcceptBox && (
-                  <td className="p-0">
-                    <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
-                      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
-                        <h2 className="text-lg font-semibold text-gray-800 mb-1">Approve Request</h2>
-                        <p className="text-sm text-gray-500 mb-6">This will grant the company access to the person&apos;s record.</p>
-                        <div className="bg-gray-50 rounded-lg p-4 mb-6 space-y-2">
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Company</span>
-                            <span className="font-medium text-gray-800">{request.company.name}</span>
-                          </div>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-500">Person</span>
-                            <span className="font-medium text-gray-800">{request.person.full_name}</span>
-                          </div>
-                        </div>
-                        <div className="flex gap-3">
-                          <button
-                            className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 rounded-lg transition-colors"
-                            onClick={() => handleAccept(request.id)}
-                            disabled={isLoading}
-                          >
-                            {isLoading ? "Approving..." : "Approve"}
-                          </button>
-                          <button
-                            className="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium py-2 rounded-lg transition-colors"
-                            onClick={() => setConfimAcceptBox(false)}
-                          >
-                            Cancel
-                          </button>
-                        </div>
-                      </div>
-                    </div>
-                  </td>
-                )}
               </tr>
             ))}
           </tbody>
         </table>
       </div>
+
+      {/* Show Confirmation Box per Request selected */}
+      {confirmAcceptBox && (
+        <td className="p-0">
+          <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
+            <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
+              <h2 className="text-lg font-semibold text-gray-800 mb-1">Approve Request</h2>
+              <p className="text-sm text-gray-500 mb-6">This will grant the company access to the person&apos;s record.</p>
+               <div className="bg-gray-50 rounded-lg p-4 mb-6 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Company</span>
+                    <span className="font-medium text-gray-800">{selected?.company.name}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Person</span>
+                    <span className="font-medium text-gray-800">{selected?.person.full_name}</span>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    className="flex-1 bg-green-600 hover:bg-green-700 text-white text-sm font-medium py-2 rounded-lg transition-colors"
+                    onClick={() => handleAccept(selected!.id)} // ! trust me, remove ur doubt 
+                    disabled={isLoading}
+                    >
+                    {isLoading ? "Approving..." : "Approve"}
+                  </button>
+                  <button
+                    className="flex-1 border border-gray-300 hover:bg-gray-50 text-gray-700 text-sm font-medium py-2 rounded-lg transition-colors"
+                    onClick={() => setConfimAcceptBox(false)}
+                    >
+                    Cancel
+                  </button>
+                </div>
+            </div>
+          </div>
+         </td>
+      )}
 
       {requests.length === 0 && (
         <p className="text-center text-gray-400 text-sm mt-8">No requests found.</p>

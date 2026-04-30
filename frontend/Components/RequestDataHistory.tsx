@@ -2,9 +2,16 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useAuth } from "@clerk/nextjs";
 
+type Request = {
+  person: { full_name: string; national_id_no: string };
+  purpose: string;
+  submitted_at: string;
+  status: string;
+  expires_at?: string;
+};
 
 const RequestDataHistory = () => {
-  const [requests, setRequests] = useState<any[]>([]);
+  const [requests, setRequests] = useState<Request[]>([]);
 
   const {getToken} = useAuth();
 
