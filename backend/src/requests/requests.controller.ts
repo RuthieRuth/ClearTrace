@@ -76,6 +76,23 @@ export class RequestsController {
     );
   }
 
+  @Get('approved')
+  @Roles(Role.company)
+  async findApprovedRequests(@Req() req: Request) {
+    const clerkUser = req['user'] as { id: string };
+    const extractCompanyID = await this.prisma.user.findUnique({
+      where: { clerk_id: clerkUser.id },
+    });
+
+    if (!extractCompanyID?.company_id) {
+      throw new Error('User not found. Therefore no company id');
+    }
+
+    return this.requestsService.findApprovedRequests(
+      extractCompanyID.company_id,
+    );
+  }
+
   // Superadmin and Data Officer endpoints
   @Get(':id')
   @Roles(Role.superadmin, Role.data_officer)

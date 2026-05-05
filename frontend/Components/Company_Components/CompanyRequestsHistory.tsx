@@ -10,7 +10,7 @@ type Request = {
   expires_at?: string;
 };
 
-const RequestDataHistory = () => {
+const CompanyRequestsHistory = () => {
   const [requests, setRequests] = useState<Request[]>([]);
 
   const {getToken} = useAuth();
@@ -89,4 +89,4 @@ const RequestDataHistory = () => {
   );
 };
 
-export default  RequestDataHistory;
+export default  CompanyRequestsHistory;

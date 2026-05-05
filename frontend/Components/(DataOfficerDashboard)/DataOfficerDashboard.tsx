@@ -5,7 +5,7 @@ import DataOfficerSidebar from "../DashboardLayoutPerRole/DataOfficerSidebar";
 import Search from "../Search";
 import NavBar from "../DashboardLayoutPerRole/NavBar";
 import NewPerson from "../NewPerson";
-import DataHistory from "../RequestDataHistory";
+import DataHistory from "../Company_Components/CompanyRequestsHistory";
 
 const DataOfficerDashboard = () => {
   const [activeTab, setActiveTab] = useState("home");

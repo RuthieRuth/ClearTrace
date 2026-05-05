@@ -7,7 +7,7 @@ import { UpdateRequestDto } from './dto/update-request.dto';
 export class RequestsService {
   constructor(private prisma: PrismaService) {}
 
-  // create a request to ask for a persons record by finding n using National Id
+  // create a request to ask for a person's record by finding it n using National Id
   async create(createRequestDto: CreateRequestDto) {
     const person = await this.prisma.person.findUnique({
       where: { national_id_no: createRequestDto.national_id_no },
@@ -60,6 +60,17 @@ export class RequestsService {
       where: { id, company_id },
       include: {
         person: true,
+        company: true,
+        requested_by: true,
+      },
+    });
+  }
+
+  findApprovedRequests(company_id: string) {
+    return this.prisma.request.findMany({
+      where: { status: 'approved', company_id },
+      include: {
+        person: { include: { offenses: true } },
         company: true,
         requested_by: true,
       },

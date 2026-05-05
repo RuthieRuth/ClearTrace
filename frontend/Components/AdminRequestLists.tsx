@@ -139,6 +139,7 @@ const AdminRequestLists = () => {
 
       {/* Show Confirmation Box per Request selected */}
       {confirmAcceptBox && (
+        <div>
         <td className="p-0">
           <div className="fixed inset-0 flex items-center justify-center bg-black/40 z-50">
             <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
@@ -172,6 +173,7 @@ const AdminRequestLists = () => {
             </div>
           </div>
          </td>
+        </div>
       )}
 
       {requests.length === 0 && (
