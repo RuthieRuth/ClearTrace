@@ -7,7 +7,7 @@ import { UpdateRequestDto } from './dto/update-request.dto';
 export class RequestsService {
   constructor(private prisma: PrismaService) {}
 
-  // create a request to ask for a persons record by finding n using National Id
+  // create a request to ask for a persons record by using their National Id to find
   async create(createRequestDto: CreateRequestDto) {
     const person = await this.prisma.person.findUnique({
       where: { national_id_no: createRequestDto.national_id_no },
