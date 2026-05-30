@@ -13,13 +13,14 @@ export class PersonsService {
   }
 
   async findMany(query: string, clerkId: string) {
-    // get the details of the one doing the search
+    // get the details of the one doing the search ie the user
     const user = await this.prisma.user.findUnique({
       where: { clerk_id: clerkId },
     });
     if (!user) {
       throw new Error('User not found');
     }
+    // if found proceed
 
     // get the allowed acccess scope of the user
     const accessScopes = await this.prisma.userAccessScope.findMany({
