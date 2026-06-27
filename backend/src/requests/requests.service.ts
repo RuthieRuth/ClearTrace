@@ -27,7 +27,7 @@ export class RequestsService {
     });
   }
 
-  // get all requests
+  // get all requests withour filtering
   findAll() {
     return this.prisma.request.findMany({
       include: {
