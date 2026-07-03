@@ -28,7 +28,7 @@ export class PersonsService {
     const allowedCategories = accessScopes.map((scope) => scope.category);
 
     // search person, filter the search results based on the access scope
-    if (user.role === Role.superadmin) {
+    if (user.role === Role.superadmin || user.role === Role.data_officer) {
       return this.prisma.person.findMany({
         where: {
           OR: [
