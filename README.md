@@ -107,6 +107,41 @@ NEXT_PUBLIC_API_URL=http://localhost:3000
 
 ---
 
+## Testing
+
+This project includes automated tests to verify the correctness of the backend logic and API endpoints.
+
+### Unit Tests
+Testing individual service functions in isolation using mocked dependencies. No real database or external API calls are made.
+
+```bash
+cd backend
+npm test
+```
+
+### Integration Tests
+Testing API endpoints end to end using a mocked database and bypassed authentication guards.
+
+```bash
+cd backend
+npm run test:e2e
+```
+
+Testing files command
+```
+npm run test:e2e -- --testPathPatterns=offenses.e2e
+```
+
+### E2E Tests
+```bash
+npx playwright test --headed 
+````
+
+--headed shows the visible brower window. without it, it runs in headless mode (no visible browser within VS code if playwright extension is installed)
+
+
+---
+
 ## Contributing
 
 Solo project — not accepting external contributions at this time.
