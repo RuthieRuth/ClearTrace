@@ -1,6 +1,7 @@
 import { useAuth } from '@clerk/nextjs'
 import axios from 'axios'
 import { useState } from 'react'
+import { useRouter } from 'next/navigation'
 
 const NewPerson = () => {
     const [fullname, setFullname] = useState('')
@@ -20,6 +21,7 @@ const NewPerson = () => {
     const [description, setDescription] = useState('')
     const [confirmationBox, setConfirmationBox] = useState(false)
     const { getToken } = useAuth()
+     const router = useRouter()
 
     const resetForm = () => {
         setFullname('')
@@ -44,10 +46,9 @@ const NewPerson = () => {
     }
 
     const submitNewEntry = async () => {
-       
        const token = await getToken()
        try{
-            // sending two separate POST requests to create person and offense entries
+          // sending two separate POST requests to create person and offense entries
         const getPerson= await axios .post('http://localhost:3000/persons', {
                 full_name: fullname,
                 national_id_no: nationalId,
@@ -59,7 +60,7 @@ const NewPerson = () => {
                 photo_url: photo,
         }, { headers: { Authorization: `Bearer ${token}` } })
 
-            const personId =  getPerson.data.id;
+        const personId =  getPerson.data.id;
         
         await axios.post('http://localhost:3000/offenses', {
             category: offenseCategory,
@@ -73,7 +74,8 @@ const NewPerson = () => {
         }, { headers: { Authorization: `Bearer ${token}` } })
         setConfirmationBox(false)
         alert('Entry saved successfully')
-        resetForm()
+        //resetForm()
+        router.push(`/persons/${personId}`) // Redirect to the newly created person's page
         }
        catch (error) {
         console.error('Error response:', error);
