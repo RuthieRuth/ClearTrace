@@ -39,6 +39,13 @@ export class PersonsController {
     return this.personsService.findMany(query, clerkId);
   }
 
+  // Endpoint to verify if a person exists based on their national ID for company users
+  @Get('verify/:nationalId')
+  @Roles(Role.company)
+  verifyPerson(@Param('nationalId') nationalId: string) {
+    return this.personsService.verifyPerson(nationalId);
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.personsService.findOne(id);

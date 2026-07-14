@@ -59,6 +59,13 @@ export class PersonsService {
     return this.prisma.person.findUnique({ where: { id } });
   }
 
+  verifyPerson(nationalId: string) {
+    return this.prisma.person.findUnique({
+      where: { national_id_no: nationalId },
+      select: { id: true, full_name: true, national_id_no: true }, // only return the fields wanted
+    });
+  }
+
   create(data: CreatePersonDto) {
     return this.prisma.person.create({
       // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
