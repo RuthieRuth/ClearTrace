@@ -62,7 +62,8 @@ const NewPerson = () => {
 
         const personId =  getPerson.data.id;
         
-        await axios.post('http://localhost:3000/offenses', {
+        if (offenseCategory && severity && dateOfOffense && convictionStatus) { // Only send offense data if all required fields are filled
+          await axios.post('http://localhost:3000/offenses', {
             category: offenseCategory,
             severity,
             date_of_offense: dateOfOffense,
@@ -70,16 +71,17 @@ const NewPerson = () => {
             court,
             case_number: caseNumber,
             description,
-            person_id: personId
-        }, { headers: { Authorization: `Bearer ${token}` } })
+            person_id: personId}, { headers: { Authorization: `Bearer ${token}` } 
+          })
+        }
         setConfirmationBox(false)
         alert('Entry saved successfully')
         //resetForm()
         router.push(`/persons/${personId}`) // Redirect to the newly created person's page
-        }
+       }
        catch (error) {
         console.error('Error response:', error);
-                alert(`Failed to save entries: ${error}`);
+        alert(`Failed to save entries: ${error}`);
        }
     }
 
