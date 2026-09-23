@@ -18,6 +18,8 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 
+import { AuthenticatedRequest } from 'src/common/types/authenticated-requests';
+
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.superadmin)
 @Controller('users')
@@ -33,7 +35,7 @@ export class UsersController {
     Role.agency_staff,
     Role.company,
   )
-  findMe(@Req() req: any) {
+  findMe(@Req() req: AuthenticatedRequest) {
     return this.usersService.findMe(req.user.id);
   }
 

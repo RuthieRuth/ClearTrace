@@ -9,11 +9,12 @@ import { PrismaService } from 'src/prisma.service';
 import request from 'supertest';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guards';
+import { AuthenticatedRequest } from 'src/common/types/authenticated-requests';
 
 // fake guard to bypass authentication and authorization by Clerk (ie users already exists)
 class FakeAuthGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
     request.user = { id: 'fake-user-id', role: 'superadmin' }; // fake logged in user
     return true;
   }

@@ -4,45 +4,50 @@ import { useEffect, useState } from "react";
 import NewEntry from "./NewPlatfomUser";
 import { useAuth } from "@clerk/nextjs";
 
+type User = {
+  id: string;
+  full_name: string;
+  role: string;
+  agency_type: string;
+};
 
 const Agencies = () => {
   const [newEntry, setNewEntry] = useState(false);
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [openAgency, setOpenAgency] = useState<string | null>(null);
   const { getToken } = useAuth();
 
-  const fetchUsers = async () => {
-    const token = await getToken();
-    try {
-      const response = await fetch("http://localhost:3000/users", {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      const data = await response.json();
-      console.log("Fetched users:", data);
-      setUsers(data);
-    } catch (error) {
-      console.error("Error fetching users:", error);
-      setError("Failed to fetch users. Please try again.");
-    }
-  }
-
-   useEffect(() => {
-        fetchUsers();
-      }, []);
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const token = await getToken();
+      try {
+        const response = await fetch("http://localhost:3000/users", {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await response.json();
+        console.log("Fetched users:", data);
+        setUsers(data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+        setError("Failed to fetch users. Please try again.");
+      }
+    };
+    fetchUsers();
+  }, []);
 
   // filter and group
   const agencyUsers = users.filter(user => user.role === "agency_head" || user.role === "agency_staff");
 
-  const groupByAgency:  Record<string, any[]> = agencyUsers.reduce((accumulator, user) => {
-    const key = user.agency_type;
-    // if this agency has no array yet, create an empty one
-    if (!accumulator[key]) { 
-      accumulator[key] = [];
-    }
-    accumulator[key].push(user);
-    return accumulator;
-  }, {});
+    const groupByAgency = agencyUsers.reduce<Record<string, User[]>>((accumulator, user) => {
+      const key = user.agency_type;
+      if (!accumulator[key]) {
+        accumulator[key] = [];
+      }
+      accumulator[key].push(user);
+      return accumulator;
+    }, {});
+
 
   console.log("Grouped users by agency:", groupByAgency);
 

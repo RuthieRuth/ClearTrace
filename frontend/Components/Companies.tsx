@@ -5,35 +5,43 @@ import NewEntry from "./NewPlatfomUser";
 import NewCompany from "./NewCompany";
 import { useAuth } from "@clerk/nextjs";
 
-type Props = {
+/* type Props = {
   onClose: () => void;
-}; 
-const Companies = ({ onClose }: Props) => {
+};  */
+
+type Company = {
+  id: string;
+  name: string;
+  contact_email: string;
+  contact_phone: string;
+};  
+
+
+const Companies = () => {
   const [newCompany, setNewCompany] = useState(false);
   const [newEntry, setNewEntry] = useState(false); 
-  const [companies, setCompanies] = useState<any[]>([]); // State to hold the list of companies
+  const [companies, setCompanies] = useState<Company[]>([]); // State to hold the list of companies
   const { getToken } = useAuth();
 
   // Fetch companies from the backend (this is a placeholder, implement actual fetching logic)
-  const fetchCompanies = async () => {
-   const token = await getToken();
-   try{
-    const response = await fetch("http://localhost:3000/companies", {
-      headers: { Authorization: `Bearer ${token}` },
-    });
-    const data = await response.json();
-    setCompanies(data);
-    console.log("Fetched companies:", data);
-   }
-   catch (error) {
-    console.error("Error fetching companies:", error);
-   }
-  };
-
   // Call fetchCompanies when the component mounts
   useEffect(() => {
-    fetchCompanies();
-  }, []);
+  const fetchCompanies = async () => {
+    const token = await getToken();
+    try {
+      const response = await fetch("http://localhost:3000/companies", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await response.json();
+      setCompanies(data);
+      console.log("Fetched companies:", data);
+    } catch (error) {
+      console.error("Error fetching companies:", error);
+    }
+  };
+  fetchCompanies();
+}, []);
+
 
   return (
     <div>

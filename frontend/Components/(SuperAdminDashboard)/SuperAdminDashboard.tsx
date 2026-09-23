@@ -63,7 +63,7 @@ const SuperAdminDashboard = () => {
         });
         const data = await usersStats.json();
         const agencyCount = data.filter(
-          (user: any) => user.role === "agency_head" || user.role === "agency_staff").length;
+          (user: {role: string}) => user.role === "agency_head" || user.role === "agency_staff").length;
         setStats(prev => ({ ...prev, users: data.length, agencyUsers: agencyCount }));
       } catch (error) {
         console.error("Error fetching users stats:", error);

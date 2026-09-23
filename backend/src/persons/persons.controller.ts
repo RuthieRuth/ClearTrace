@@ -19,6 +19,8 @@ import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 import { PrismaService } from 'src/prisma.service';
 
+import { AuthenticatedRequest } from 'src/common/types/authenticated-requests';
+
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.superadmin, Role.data_officer, Role.agency_head, Role.agency_staff)
 @Controller('persons')
@@ -34,8 +36,8 @@ export class PersonsController {
   }
 
   @Get('search/:query')
-  findMany(@Param('query') query: string, @Req() req: Request) {
-    const clerkId = req['user'].id;
+  findMany(@Param('query') query: string, @Req() req: AuthenticatedRequest) {
+    const clerkId = req.user.id;
     return this.personsService.findMany(query, clerkId);
   }
 
@@ -52,8 +54,11 @@ export class PersonsController {
   }
 
   @Post()
-  async create(@Body() body: CreatePersonDto, @Req() req: Request) {
-    const clerkUser = req['user'];
+  async create(
+    @Body() body: CreatePersonDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const clerkUser = req.user;
     const extractUser = await this.prisma.user.findUnique({
       where: { clerk_id: clerkUser.id },
     });
