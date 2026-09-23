@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import NewEntry from "./NewPlatfomUser";
 import NewCompany from "./NewCompany";
 import { useAuth } from "@clerk/nextjs";
@@ -31,7 +31,7 @@ const Companies = ({ onClose }: Props) => {
   };
 
   // Call fetchCompanies when the component mounts
-  useState(() => {
+  useEffect(() => {
     fetchCompanies();
   }, []);
 
