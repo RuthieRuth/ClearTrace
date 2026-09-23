@@ -99,7 +99,7 @@ const AdminRequestLists = () => {
             </span>
 
             {request.status === 'submitted' && (
-              <div>
+              <div className="flex gap-6">
                 <button onClick={confirmAccept}>ACCEPT</button>
                 <button onClick={handleReject}>REJECT</button>
               </div>
