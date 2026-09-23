@@ -110,7 +110,8 @@ const SuperAdminDashboard = () => {
             </div>
           }
           {activeTab === "agencies" && <Agencies />}
-          {activeTab === "companies" && <Companies onClose={() => setActiveTab('companies')} />}
+          {/* {activeTab === "companies" && <Companies onClose={() => setActiveTab('companies')} />} */}
+          {activeTab === "companies" && <Companies />}
           {activeTab === "search" && <Search onAddPerson={() => setActiveTab('newPerson')} />}
           {activeTab === "newPerson" && <NewPerson />}
           {activeTab === "requests" && <RequestLists />}
