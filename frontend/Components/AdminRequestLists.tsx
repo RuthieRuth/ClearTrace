@@ -4,8 +4,22 @@ import { useEffect, useState } from "react";
 import { useAuth } from "@clerk/nextjs";
 import axios from "axios";
 
+interface Request {
+  id: string;
+  company: {
+    name: string;
+  };
+  person: {
+    id: string;
+    national_id_no: string;
+    full_name: string;
+  };
+  purpose: string;
+  status: "submitted" | "approved" | "rejected";
+}
+
 const AdminRequestLists = () => {
-  const [requests, setRequests] = useState<any[]>([]);
+  const [requests, setRequests] = useState<Request[]>([]);
   const [confirmAcceptBox, setConfimAcceptBox] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,8 +40,22 @@ const AdminRequestLists = () => {
   };
 
     useEffect(() => {
-      fetchRequests();
+      const loadRequests = async () => {
+        const token = await getToken();
+        try {
+          const response = await fetch("http://localhost:3000/requests", {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          const data = await response.json();
+          setRequests(data);
+        } catch (error) {
+          console.error("Error fetching requests:", error);
+          setError("Failed to fetch requests. Please try again.");
+        }
+      };
+      loadRequests();
     }, []);
+
 
   const handleAccept = async (id: string) => {
     const token = await getToken();

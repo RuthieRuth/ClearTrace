@@ -1,3 +1,5 @@
+# CI workflow: INSTALL → (generate prisma/ dependencies) → LINT → TEST → BUILD → artifact upload(save the output for later use eg: deployment) → caching (no redownloads).
+
 name: CI workflow
 
 on:
@@ -14,9 +16,20 @@ jobs:
         - name: Check code
           uses: actions/checkout@v4
         
+        - name: Setup Node
+          uses: actions/setup-node@v4
+          with:
+              node-version: 23
+              cache: npm
+              cache-dependency-path: frontend/package-lock.json
+        
         - name: Install dependencies
           run: npm install
           working-directory: frontend
+        
+        - name: Run lint
+          run: npm run lint
+          working-directory: frontend 
         
         - name: Build frontend
           run: npm run build
@@ -36,6 +49,13 @@ jobs:
         - name: Check code
           uses: actions/checkout@v4
         
+        - name: Setup Node
+          uses: actions/setup-node@v4
+          with:
+              node-version: 23
+              cache: npm
+              cache-dependency-path: backend/package-lock.json
+
         - name: Install dependencies
           run: npm install
           working-directory: backend
@@ -47,6 +67,14 @@ jobs:
               CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
               DATABASE_URL: ${{ secrets.DATABASE_URL }}
               JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        
+        - name: Run lint
+          run: npm run lint
+          working-directory: backend
+        
+        - name: Run tests
+          run: npm test
+          working-directory: backend
 
         - name: Build backend
           run: npm run build
@@ -55,4 +83,14 @@ jobs:
               CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
               DATABASE_URL: ${{ secrets.DATABASE_URL }}
               JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        
+        - name: Upload backend build
+          uses: actions/upload-artifact@v4
+          with:
+            name: backend-dist
+            path: backend/dist
+
+        
           
+          
+
