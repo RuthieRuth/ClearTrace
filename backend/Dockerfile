@@ -12,7 +12,6 @@ RUN npm run build
 # Stage 2: runtime
 FROM node:23-alpine
 RUN apk update && apk upgrade --no-cache
-RUN npm install -g npm@latest
 WORKDIR /app
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
@@ -21,9 +20,12 @@ ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
 RUN npm ci --omit=dev
 RUN npx prisma generate
+RUN rm -rf /usr/local/lib/node_modules/npm/node_modules/tar \
+           /usr/local/lib/node_modules/npm/node_modules/node-gyp/node_modules/tar \
+           /usr/local/lib/node_modules/npm/node_modules/cacache/node_modules/tar
 EXPOSE 3000
 USER node
-CMD ["npm", "run", "start:prod"]
+CMD ["node", "dist/src/main"]
 
 
 
