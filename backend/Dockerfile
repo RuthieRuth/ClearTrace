@@ -14,6 +14,7 @@ FROM node:23-alpine
 WORKDIR /app
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
+COPY --from=builder /app/prisma ./prisma
 ARG DATABASE_URL
 ENV DATABASE_URL=$DATABASE_URL
 RUN npm install --omit=dev
