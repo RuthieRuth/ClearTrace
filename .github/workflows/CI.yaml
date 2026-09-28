@@ -115,6 +115,9 @@ jobs:
         - name: Build backend
           run: docker build --build-arg DATABASE_URL=${{ secrets.DATABASE_URL }} -t offense-registry-backend ./backend
 
+        - name: Debug - find tar in backend image
+          run: docker run --rm offense-registry-backend sh -c "find node_modules -type d -name tar -exec dirname {} \;"
+
         - name: Build frontend
           run: docker build --build-arg NEXT_PUBLIC_API_URL=${{ secrets.NEXT_PUBLIC_API_URL }} -t offense-registry-frontend ./frontend
         
