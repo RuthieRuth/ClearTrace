@@ -16,9 +16,17 @@ export class JwtAuthGuard implements CanActivate {
     if (!token) throw new UnauthorizedException();
 
     try {
-      const payload = await verifyToken(token, {
+      const { data: payload, errors } = (await verifyToken(token, {
         secretKey: process.env.CLERK_SECRET_KEY,
-      });
+      })) as {
+        data?: { sub: string; metadata?: { role?: string } };
+        errors?: unknown[];
+      };
+
+      if (errors || !payload) {
+        throw new UnauthorizedException();
+      }
+
       const role = (payload.metadata as { role?: string })?.role;
       request['user'] = { id: payload.sub, role };
       return true;
