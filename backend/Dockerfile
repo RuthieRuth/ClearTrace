@@ -12,6 +12,7 @@ RUN npm run build
 # Stage 2: runtime
 FROM node:23-alpine
 RUN apk update && apk upgrade --no-cache
+RUN npm install -g npm@latest
 WORKDIR /app
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/package*.json ./
