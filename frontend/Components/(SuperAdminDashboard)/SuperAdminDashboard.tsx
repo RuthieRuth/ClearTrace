@@ -61,6 +61,9 @@ const SuperAdminDashboard = () => {
         const usersStats = await fetch("http://localhost:3000/users", {
           headers: { Authorization: `Bearer ${token}` },
         });
+        if (!usersStats.ok) {
+          throw new Error(`Failed to fetch users: ${usersStats.status}`);
+        }
         const data = await usersStats.json();
         const agencyCount = data.filter(
           (user: {role: string}) => user.role === "agency_head" || user.role === "agency_staff").length;
