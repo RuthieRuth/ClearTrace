@@ -55,7 +55,7 @@ export class JwtAuthGuard implements CanActivate {
     if (!token) throw new UnauthorizedException();
 
     try {
-      const result = await verifyToken(token, {
+      const result: unknown = await verifyToken(token, {
         secretKey: process.env.CLERK_SECRET_KEY,
       });
 
