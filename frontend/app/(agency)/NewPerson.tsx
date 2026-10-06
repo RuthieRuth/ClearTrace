@@ -193,7 +193,7 @@ const NewPerson = () => {
             <button className='border p-2' onClick={cancelEntry}>Cancel</button>
           </div>
         </div>
-      )}
+        )}
     </div>
   )
 }
