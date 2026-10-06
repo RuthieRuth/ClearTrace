@@ -1,4 +1,4 @@
-import SearchResults from "@/Components/sharedAcrossApp/SearchResults";
+import SearchResults from "@/Components/sharedAcrossApp/RequestedResults";
 import React from "react";
 import NavBar from "@/Components/DashboardLayoutPerRole/NavBar";
 

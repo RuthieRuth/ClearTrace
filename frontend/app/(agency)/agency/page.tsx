@@ -1,4 +1,4 @@
-import Dashboard from "@/Components/(GovtDashboard)/GovtDashboard";
+import Dashboard from "@/Components/(AgencyDashboard)/AgencyDashboard";
 
 const GovernmentPage = () => {
   return <Dashboard />;

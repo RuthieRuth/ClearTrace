@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SuperAdminSideBar from "../DashboardLayoutPerRole/SuperAdminSideBar";
 import Search from "../Search";
 import NavBar from "../DashboardLayoutPerRole/NavBar";
-//import NewEntry from "../NewEntry";
 import Agencies from "../Agencies";
 import Companies from "../Companies";
+import NewPerson from "../NewPerson";
+import RequestLists from "../AdminRequestLists";
+import { useAuth } from "@clerk/nextjs";
+
 
 const SuperAdminDashboard = () => {
   const [activeTab, setActiveTab] = useState("home");
@@ -19,7 +22,6 @@ const SuperAdminDashboard = () => {
     users: 0,
     agencyUsers: 0,
   });
-  const [newEntry, setNewEntry] = useState(false); 
 
   useEffect(() => {
     const fetchStats = async () => {
@@ -83,43 +85,39 @@ const SuperAdminDashboard = () => {
         <main className="flex-1 p-6">
           {activeTab === "home" && 
             <div className="space-y-16" >
-              <p>Dashboard</p>
               <p>Welcome to the Super Admin Dashboard!</p>
 
               {/* Stats cards */}
               <div className="flex flex-wrap gap-4 justify-center">
-                <div className="border p-4 flex flex-col items-center justify-center" 
-                  onClick={() => console.log("New person card clicked")}>
+                <div className="border p-4 flex flex-col items-center justify-center">
                   <p>Persons</p>
                   <p className="font-bold mt-2">{stats.persons}</p>
                 </div>
-                <div className="border p-4 flex flex-col items-center justify-center cursor-pointer hover:bg-gray-50"
-                  onClick={() => {
-                    console.log('Companies card clicked');
-                    setActiveTab('companies');
-                  }}>
+                <div className="border p-4 flex flex-col items-center justify-center">
                   <p>Companies</p>
                   <p className="font-bold mt-2">{stats.companies}</p>
                 </div>
-                <div className="border p-4 flex flex-col items-center justify-center" onClick={() => {setActiveTab('requests');}}>
+                <div className="border p-4 flex flex-col items-center justify-center">
                   <p>Requests</p>
                   <p className="font-bold mt-2">{stats.requests}</p>
                 </div>
-                <div className="border p-4 flex flex-col items-center justify-center" onClick={() => {setActiveTab('users');}}>
+                <div className="border p-4 flex flex-col items-center justify-center">
                   <p>Users</p>
                   <p className="font-bold mt-2">{stats.users}</p>
                 </div>
-                <div className="border p-4 flex flex-col items-center justify-center" onClick={() => {setActiveTab('agencies');}}>
+                <div className="border p-4 flex flex-col items-center justify-center">
                   <p>Agency Users</p>
                   <p className="font-bold mt-2">{stats.agencyUsers}</p>
                 </div>
               </div>
             </div>
           }
-          {activeTab === "search" && <Search />}
-          {/* {activeTab === "newEntry" && <NewEntry />} */}
           {activeTab === "agencies" && <Agencies />}
+          {/* {activeTab === "companies" && <Companies onClose={() => setActiveTab('companies')} />} */}
           {activeTab === "companies" && <Companies />}
+          {activeTab === "search" && <Search onAddPerson={() => setActiveTab('newPerson')} />}
+          {activeTab === "newPerson" && <NewPerson />}
+          {activeTab === "requests" && <RequestLists />}
         </main>
       </div>
     </div>

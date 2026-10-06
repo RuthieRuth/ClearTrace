@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { PersonsService } from './persons.service';
@@ -16,16 +17,35 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guards';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
+import { PrismaService } from 'src/prisma.service';
+
+import { AuthenticatedRequest } from 'src/common/types/authenticated-requests';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles(Role.superadmin, Role.government)
+@Roles(Role.superadmin, Role.data_officer, Role.agency_head, Role.agency_staff)
 @Controller('persons')
 export class PersonsController {
-  constructor(private readonly personsService: PersonsService) {}
+  constructor(
+    private readonly personsService: PersonsService,
+    private readonly prisma: PrismaService,
+  ) {}
 
   @Get()
   findAll() {
     return this.personsService.findAll();
+  }
+
+  @Get('search/:query')
+  findMany(@Param('query') query: string, @Req() req: AuthenticatedRequest) {
+    const clerkId = req.user.id;
+    return this.personsService.findMany(query, clerkId);
+  }
+
+  // Endpoint to verify if a person exists based on their national ID for company users
+  @Get('verify/:nationalId')
+  @Roles(Role.company)
+  verifyPerson(@Param('nationalId') nationalId: string) {
+    return this.personsService.verifyPerson(nationalId);
   }
 
   @Get(':id')
@@ -34,7 +54,19 @@ export class PersonsController {
   }
 
   @Post()
-  create(@Body() body: CreatePersonDto) {
+  async create(
+    @Body() body: CreatePersonDto,
+    @Req() req: AuthenticatedRequest,
+  ) {
+    const clerkUser = req.user;
+    const extractUser = await this.prisma.user.findUnique({
+      where: { clerk_id: clerkUser.id },
+    });
+    if (!extractUser) {
+      throw new Error('User not found in database');
+    }
+    body.created_by_id = extractUser.id;
+
     return this.personsService.create(body);
   }
 

@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
@@ -17,11 +18,26 @@ import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
 
+import { AuthenticatedRequest } from 'src/common/types/authenticated-requests';
+
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.superadmin)
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
+
+  // endpoint to get the user details of the one making the request (during sign-in)
+  @Get('me')
+  @Roles(
+    Role.superadmin,
+    Role.data_officer,
+    Role.agency_head,
+    Role.agency_staff,
+    Role.company,
+  )
+  findMe(@Req() req: AuthenticatedRequest) {
+    return this.usersService.findMe(req.user.id);
+  }
 
   @Get()
   findAll() {

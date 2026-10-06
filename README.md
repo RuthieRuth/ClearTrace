@@ -6,26 +6,30 @@
 
 ## Overview
 
-ClearTrace is a secure, role-based platform for centralising and controlling access to sensitive records — with full audit trails and tiered access across multiple types of organisations. It provides a controlled bridge between record-keeping institutions and authorised third parties who require verified information for legitimate purposes.
+ClearTrace is a controlled-access record management system built around a multi-tiered Role-Based Access Control (RBAC) model. A central authority owns and manages the data. Authorised agencies can query it at different permission levels depending on their role. Private companies can submit formal requests to access specific records — such as background checks — through a request and approval workflow.
 
-The platform is built with data integrity, access control, and full auditability at its core.
+Every action is logged in a full audit trail. Access is tiered by organisation type and individual role, ensuring each user sees only what they are permitted to see.
+
+In its current form, ClearTrace operates as a single, self-contained registry — equivalent to one tenant in a SaaS model. The architecture is designed with that future in mind: multiple independent registries (e.g. different jurisdictions) could each run as isolated tenants on the same platform.
 
 ---
 
 ## Status
 
-🚧 **Work in progress** — not ready for production use.
+Work in progress — not ready for production use.
 
-Architecture and database design are still being refined. Backend and frontend are in early development.
+- Authentication and role-based access are functional
+- Core data entry and search are in active development
+- Architecture and database design are still being refined
 
 ---
 
 ## Planned features
 
-- Tiered access to verified records based on user role and permissions
-- Support for multiple categories of users with different levels of data visibility
-- Complete audit trail of all actions taken on the platform
-- Request lifecycle management for third-party data access
+- Multi-tenant onboarding with organisation-level isolation
+- Tiered, role-scoped access to verified records
+- Request lifecycle management for cross-organisation data queries
+- Complete audit trail of all actions across all tenants
 - Duplicate and conflicting record detection and review
 
 ---
@@ -35,7 +39,8 @@ Architecture and database design are still being refined. Backend and frontend a
 - **Frontend** — Next.js, Tailwind CSS
 - **Backend** — NestJS, TypeScript
 - **Database** — PostgreSQL, Prisma ORM
-- **Auth** — JWT, Passport.js
+- **Auth** — Clerk
+- **DevOps** — Docker, GitHub Actions (CI)
 
 ---
 
@@ -43,22 +48,100 @@ Architecture and database design are still being refined. Backend and frontend a
 
 ```
 cleartrace/
-├── frontend/       
-├── backend/        
-├── database/       
-└── README.md       
+├── frontend/
+├── backend/
+├── database/
+└── README.md
 ```
 
 ---
 
 ## Getting started
 
-Documentation for local setup will be added once the core modules are stable.
+### Prerequisites
+
+- [Docker Desktop](https://www.docker.com/products/docker-desktop/) installed and running
+
+### Running with Docker
+
+1. Clone the repository
+2. Create a `.env` file at the project root (see `.env` structure below)
+3. Run:
+
+```bash
+docker compose up --build
+```
+
+- Frontend: http://localhost:3001
+- Backend: http://localhost:3000
+
+4. Run database migrations:
+
+```bash
+docker compose exec backend npx prisma migrate deploy
+```
+
+5. Seed the initial superadmin:
+
+```bash
+docker compose exec backend npx prisma db seed
+```
+
+To stop: `docker compose down`
+
+### Root `.env` file structure
+
+```
+# Backend
+DATABASE_URL=postgresql://USER:PASSWORD@database:5432/offense_registry
+JWT_SECRET=your_jwt_secret
+CLERK_SECRET_KEY=your_clerk_secret_key
+
+# Frontend
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=your_publishable_key
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/login
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/
+NEXT_PUBLIC_CLERK_AFTER_SIGN_OUT_URL=/login
+NEXT_PUBLIC_API_URL=http://localhost:3000
+```
+
+---
+
+## Testing
+
+This project includes automated tests to verify the correctness of the backend logic and API endpoints.
+
+### Unit Tests
+Testing individual service functions in isolation using mocked dependencies. No real database or external API calls are made.
+
+```bash
+cd backend
+npm test
+```
+
+### Integration Tests
+Testing API endpoints end to end using a mocked database and bypassed authentication guards.
+
+```bash
+cd backend
+npm run test:e2e
+```
+
+Testing files command
+```
+npm run test:e2e -- --testPathPatterns=offenses.e2e
+```
+
+### E2E Tests
+```bash
+npx playwright test --headed 
+````
+
+--headed shows the visible brower window. without it, it runs in headless mode (no visible browser within VS code if playwright extension is installed)
+
 
 ---
 
 ## Contributing
 
-This project is not open for external contributions at this time.
-
----
+Solo project — not accepting external contributions at this time.
