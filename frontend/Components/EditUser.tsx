@@ -8,6 +8,7 @@ type User = {
   full_name: string;
   role: string;
   agency_type: string;
+  is_active: boolean;
 };
 
 type Props = {
@@ -42,8 +43,8 @@ const EditUser = ({ user, onClose, onSave }: Props) => {
     <div className='m-10 border rounded-lg p-6 bg-white'>
       <p onClick={onClose} className="flex items-end justify-end mb-4 hover:underline">close</p>
 
-      <h1 className="font-semibold">EDIT USER</h1>
-      <p className="mb-4">{user.full_name}</p>
+      <h1 className="font-semibold flex justify-center mb-2 underline">EDIT USER</h1>
+      <p className="mb-2">Name: {user.full_name}</p>
 
       <div className="flex gap-5 mb-2">
         <p className="mt-1">Agency Role:</p>
