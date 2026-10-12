@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -70,11 +70,42 @@ export class UsersService {
     }
   }
 
-  update(id: string, data: UpdateUserDto) {
+  async update(id: string, data: UpdateUserDto) {
+    //find the user
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // update the user access
+    if (data.is_active === false) {
+      await clerk.users.banUser(user.clerk_id);
+    } else if (data.is_active === true) {
+      await clerk.users.unbanUser(user.clerk_id);
+    }
+
     return this.prisma.user.update({ where: { id }, data });
   }
 
-  delete(id: string) {
+  async delete(id: string) {
+    // 1. Find the user in Postgres to get the Clerk ID
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    // 2. Delete the user from Clerk
+    try {
+      await clerk.users.deleteUser(user.clerk_id);
+    } catch (error) {
+      if (error instanceof Error && 'status' in error && error.status === 404) {
+        console.warn('Clerk user already deleted, continuing:', user.clerk_id);
+      } else {
+        throw error;
+      }
+    }
+
+    // 3. Delete the user from Postgres
     return this.prisma.user.delete({ where: { id } });
   }
 }
