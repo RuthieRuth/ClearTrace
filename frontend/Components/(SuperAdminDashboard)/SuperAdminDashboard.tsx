@@ -9,6 +9,7 @@ import Companies from "../Companies";
 import NewPerson from "../NewPerson";
 import RequestLists from "../AdminRequestLists";
 import { useAuth } from "@clerk/nextjs";
+import Logs from "../Logs";
 
 
 const SuperAdminDashboard = () => {
@@ -112,12 +113,13 @@ const SuperAdminDashboard = () => {
               </div>
             </div>
           }
+
           {activeTab === "agencies" && <Agencies />}
-          {/* {activeTab === "companies" && <Companies onClose={() => setActiveTab('companies')} />} */}
           {activeTab === "companies" && <Companies />}
+          {activeTab === "requests" && <RequestLists />}
+          {activeTab === "peopleLogs" && <Logs />}
           {activeTab === "search" && <Search onAddPerson={() => setActiveTab('newPerson')} />}
           {activeTab === "newPerson" && <NewPerson />}
-          {activeTab === "requests" && <RequestLists />}
         </main>
       </div>
     </div>
