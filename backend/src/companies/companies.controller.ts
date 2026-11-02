@@ -6,6 +6,7 @@ import {
   Param,
   Patch,
   Post,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { CompaniesService } from './companies.service';
@@ -16,6 +17,7 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guards';
 import { RolesGuard } from 'src/common/guards/roles.guard';
 import { Roles } from 'src/common/decorators/roles.decorator';
 import { Role } from '@prisma/client';
+import { AuthenticatedRequest } from 'src/common/types/authenticated-requests';
 
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(Role.superadmin)
@@ -34,8 +36,8 @@ export class CompaniesController {
   }
 
   @Post()
-  create(@Body() body: CreateCompanyDto) {
-    return this.companiesService.create(body);
+  create(@Body() body: CreateCompanyDto, @Req() req: AuthenticatedRequest) {
+    return this.companiesService.create(body, req.user.id);
   }
 
   @Patch(':id')
